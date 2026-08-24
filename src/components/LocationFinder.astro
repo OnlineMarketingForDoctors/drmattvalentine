@@ -1,0 +1,322 @@
+---
+import { valentineStates, cashionStates, valentineCount, cashionCount } from "../data/locations";
+
+interface Props {
+  id?: string;
+}
+const { id = "clinics" } = Astro.props;
+
+const allValentine = valentineStates.flatMap((s) =>
+  s.clinics.map((c) => ({ ...c, code: s.code, state: s.name }))
+);
+---
+
+<section class="band clinics" id={id}>
+  <div class="wrap">
+    <header class="clinics__head">
+      <p class="tag" data-reveal>Where he operates</p>
+      <h2 data-reveal style="--delay:80ms">
+        {valentineCount} clinics, three states.
+      </h2>
+      <p class="lede measure" data-reveal style="--delay:160ms">
+        He flies to all of them. Brisbane is the base; everything else is a
+        trip. If your patient can get to one of these towns, they do not need
+        to travel to a capital city for the procedure.
+      </p>
+    </header>
+
+    {/* Filter is progressive enhancement: without JS every clinic is shown,
+        which is the useful failure mode for a list this short. */}
+    <div class="clinics__filter" data-filter role="group" aria-label="Filter clinics by state">
+      <button type="button" data-state="all" aria-pressed="true">All</button>
+      {
+        valentineStates.map((s) => (
+          <button type="button" data-state={s.code} aria-pressed="false">
+            {s.code}
+            <span class="clinics__count">{s.clinics.length}</span>
+          </button>
+        ))
+      }
+    </div>
+
+    <ol class="clinics__list" data-list>
+      {
+        allValentine.map((c, i) => (
+          <li class="clinic" data-code={c.code} data-reveal style={`--delay:${Math.min(i, 12) * 35}ms`}>
+            <span class="clinic__code">{c.code}</span>
+            <span class="clinic__area">
+              {c.area}
+              {c.base && <span class="clinic__base">base</span>}
+            </span>
+            <span class="clinic__name">{c.clinic}</span>
+          </li>
+        ))
+      }
+    </ol>
+
+    <p class="clinics__empty" data-empty hidden>No clinics in that state.</p>
+  </div>
+
+  {/* The honest answer to "where is the nearest one" spans the whole network,
+      so Dr Cashion's list sits here too — clearly attributed, deliberately
+      quieter than the list above. */}
+  <div class="wrap clinics__network">
+    <hr class="rule" />
+    <header class="clinics__net-head" data-reveal>
+      <p class="tag">The rest of the network</p>
+      <h3>Dr Geoff Cashion covers another {cashionCount}.</h3>
+      <p class="measure">
+        If your patient is outside Queensland, Victoria or Western Australia,
+        they will most likely see Dr Cashion rather than Dr Valentine. Same
+        technique, same organisation.
+      </p>
+    </header>
+
+    <div class="netgrid">
+      {
+        cashionStates.map((s) => (
+          <div class="netgroup" data-reveal>
+            <p class="netgroup__name">{s.name}</p>
+            <ul>
+              {s.clinics.map((c) => (
+                <li>
+                  <span class="netgroup__area">{c.area}</span>
+                  <span class="netgroup__clinic">{c.clinic}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<script>
+  const wrap = document.querySelector<HTMLElement>("[data-filter]");
+  const items = Array.from(document.querySelectorAll<HTMLElement>(".clinic"));
+  const empty = document.querySelector<HTMLElement>("[data-empty]");
+
+  wrap?.addEventListener("click", (e) => {
+    const btn = (e.target as HTMLElement).closest<HTMLButtonElement>("button[data-state]");
+    if (!btn) return;
+
+    const code = btn.dataset.state ?? "all";
+    wrap.querySelectorAll("button").forEach((b) =>
+      b.setAttribute("aria-pressed", String(b === btn))
+    );
+
+    let shown = 0;
+    for (const el of items) {
+      const match = code === "all" || el.dataset.code === code;
+      el.hidden = !match;
+      if (match) shown++;
+    }
+    if (empty) empty.hidden = shown > 0;
+  });
+</script>
+
+<style>
+  .clinics__head {
+    max-width: 52rem;
+  }
+
+  .clinics__head h2 {
+    margin-top: 0.3em;
+  }
+
+  .clinics__head .lede {
+    margin-top: 1.2rem;
+  }
+
+  /* ---- filter ---- */
+  .clinics__filter {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: clamp(2rem, 4vw, 3rem);
+  }
+
+  .clinics__filter button {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.5em;
+    padding: 0.6em 1.15em;
+    background: transparent;
+    color: var(--ink);
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    border: 1px solid color-mix(in srgb, var(--ink) 22%, transparent);
+    border-radius: 999px;
+    cursor: pointer;
+    transition: background-color 0.3s var(--ease), color 0.3s var(--ease),
+      border-color 0.3s var(--ease);
+  }
+
+  .clinics__filter button:hover {
+    border-color: color-mix(in srgb, var(--ink) 45%, transparent);
+  }
+
+  .clinics__filter button[aria-pressed="true"] {
+    background: var(--drape-deep);
+    border-color: var(--drape-deep);
+    color: var(--bone-pure);
+  }
+
+  .clinics__count {
+    font-size: 0.66rem;
+    opacity: 0.6;
+  }
+
+  /* ---- list ---- */
+  .clinics__list {
+    list-style: none;
+    margin: clamp(1.75rem, 3vw, 2.5rem) 0 0;
+    padding: 0;
+    border-top: 1px solid color-mix(in srgb, var(--ink) 14%, transparent);
+  }
+
+  .clinic {
+    display: grid;
+    grid-template-columns: 3.25rem 1fr;
+    gap: 0.15rem 1rem;
+    padding: 1.15rem 0;
+    border-bottom: 1px solid color-mix(in srgb, var(--ink) 12%, transparent);
+  }
+
+  .clinic__code {
+    grid-row: span 2;
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    color: var(--drape);
+    padding-top: 0.42em;
+  }
+
+  .clinic__area {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 0.7em;
+    font-family: var(--display);
+    font-size: clamp(1.15rem, 1rem + 0.5vw, 1.45rem);
+    font-weight: 600;
+    font-variation-settings: "opsz" 30, "SOFT" 20, "WONK" 0;
+    letter-spacing: -0.012em;
+    line-height: 1.15;
+  }
+
+  .clinic__base {
+    font-family: var(--mono);
+    font-size: 0.6rem;
+    font-weight: 500;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--iodine);
+    border: 1px solid color-mix(in srgb, var(--iodine) 40%, transparent);
+    border-radius: 999px;
+    padding: 0.25em 0.7em;
+    transform: translateY(-0.15em);
+  }
+
+  .clinic__name {
+    font-size: 0.95rem;
+    color: var(--ink-soft);
+  }
+
+  .clinics__empty {
+    margin-top: 2rem;
+    font-size: 0.95rem;
+    color: var(--ink-soft);
+  }
+
+  /* ---- network ---- */
+  .clinics__network {
+    margin-top: clamp(4rem, 8vw, 7rem);
+  }
+
+  .clinics__net-head {
+    margin-top: clamp(2.5rem, 5vw, 4rem);
+  }
+
+  .clinics__net-head h3 {
+    margin-top: 0.35em;
+    margin-bottom: 0.9rem;
+  }
+
+  .clinics__net-head p {
+    font-size: 0.98rem;
+    color: var(--ink-soft);
+  }
+
+  .netgrid {
+    display: grid;
+    gap: 2.25rem 2.5rem;
+    margin-top: clamp(2rem, 4vw, 3rem);
+  }
+
+  .netgroup__name {
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    font-weight: 500;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--drape);
+    padding-bottom: 0.7rem;
+    border-bottom: 1px solid color-mix(in srgb, var(--ink) 14%, transparent);
+  }
+
+  .netgroup ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .netgroup li {
+    display: grid;
+    gap: 0.1rem;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid color-mix(in srgb, var(--ink) 8%, transparent);
+  }
+
+  .netgroup__area {
+    font-size: 0.92rem;
+    font-weight: 500;
+  }
+
+  .netgroup__clinic {
+    font-size: 0.86rem;
+    color: var(--ink-soft);
+  }
+
+  @media (min-width: 40rem) {
+    .clinic {
+      grid-template-columns: 3.5rem minmax(0, 18rem) 1fr;
+      align-items: baseline;
+      gap: 1.5rem;
+    }
+    .clinic__code {
+      grid-row: auto;
+      padding-top: 0;
+    }
+    .clinic__name {
+      text-align: right;
+    }
+  }
+
+  @media (min-width: 52rem) {
+    .netgrid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (min-width: 76rem) {
+    .netgrid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+</style>

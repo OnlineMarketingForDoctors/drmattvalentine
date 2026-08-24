@@ -1,0 +1,92 @@
+---
+import { NOINDEX } from "../site.config";
+import "../styles/fonts.css";
+import "../styles/global.css";
+
+interface Props {
+  title: string;
+  description: string;
+}
+
+const { title, description } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en-AU">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+
+    {/* Backstop half of the noindex switch. The X-Robots-Tag header in
+        vercel.json is the primary control; both are driven by NOINDEX in
+        src/site.config.ts. See CLAUDE.md. */}
+    {NOINDEX && <meta name="robots" content="noindex, nofollow" />}
+
+    {/* Fonts are self-hosted (see scripts/fetch-fonts.sh). Preload only the
+        two faces that paint above the fold. */}
+    <link
+      rel="preload"
+      as="font"
+      type="font/woff2"
+      href="/fonts/fraunces-300-900-latin.woff2"
+      crossorigin
+    />
+    <link
+      rel="preload"
+      as="font"
+      type="font/woff2"
+      href="/fonts/ibm-plex-sans-300-600-latin.woff2"
+      crossorigin
+    />
+
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="alternate icon" href="/favicon.svg" />
+
+    <meta name="theme-color" content="#0e1f1b" />
+  </head>
+  <body>
+    <a class="skip" href="#main">Skip to content</a>
+    <slot />
+
+    <script>
+      // Scroll reveals. One observer, unobserve after firing.
+      const reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+      if (!reduced.matches) {
+        const io = new IntersectionObserver(
+          (entries) => {
+            for (const entry of entries) {
+              if (entry.isIntersecting) {
+                entry.target.classList.add("is-in");
+                io.unobserve(entry.target);
+              }
+            }
+          },
+          { rootMargin: "0px 0px -12% 0px", threshold: 0.12 }
+        );
+        document.querySelectorAll("[data-reveal]").forEach((el) => io.observe(el));
+      } else {
+        document.querySelectorAll("[data-reveal]").forEach((el) => el.classList.add("is-in"));
+      }
+    </script>
+
+    <style>
+      .skip {
+        position: absolute;
+        left: -9999px;
+        top: 0;
+        z-index: 100;
+        padding: 0.9rem 1.4rem;
+        background: var(--ink);
+        color: var(--bone);
+        font-size: 0.9rem;
+        text-decoration: none;
+      }
+      .skip:focus {
+        left: 0;
+      }
+    </style>
+  </body>
+</html>

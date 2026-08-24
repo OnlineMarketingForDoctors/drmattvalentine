@@ -1,0 +1,122 @@
+---
+import { SITE } from "../site.config";
+
+const year = new Date().getFullYear();
+---
+
+<footer class="foot">
+  <div class="wrap foot__inner">
+    <div class="foot__mark">
+      <p class="foot__name">Matt Valentine</p>
+      <p class="tag tag--pale">Specialist GP · No-scalpel vasectomy</p>
+    </div>
+
+    <nav class="foot__nav" aria-label="Footer">
+      <a href="/about">About</a>
+      <a href="/vasectomy">The procedure</a>
+      <a href="/vasectomy#clinics">Clinic locations</a>
+      <a href="/contact">Contact</a>
+    </nav>
+
+    <a class="foot__phone" href={SITE.phoneHref}>
+      <span class="tag tag--pale">Rooms</span>
+      <span class="foot__phone-digits">{SITE.phoneLabel}</span>
+      <span class="foot__phone-alt">{SITE.phoneDigits}</span>
+    </a>
+  </div>
+
+  <div class="wrap foot__base">
+    <p>© {year} Vasectomy Australia. All rights reserved.</p>
+    <p>Powered by Online Marketing For Doctors</p>
+  </div>
+</footer>
+
+<style>
+  .foot {
+    background: var(--ink);
+    color: var(--bone);
+    padding-block: clamp(3.5rem, 7vw, 6rem) 2rem;
+  }
+
+  .foot__inner {
+    display: grid;
+    gap: 2.5rem;
+    padding-bottom: clamp(2.5rem, 5vw, 4rem);
+  }
+
+  .foot__name {
+    font-family: var(--display);
+    font-size: clamp(1.8rem, 1.2rem + 2vw, 2.75rem);
+    font-weight: 600;
+    font-variation-settings: "opsz" 48, "SOFT" 20, "WONK" 1;
+    letter-spacing: -0.02em;
+    line-height: 1;
+    margin-bottom: 0.5rem;
+  }
+
+  .foot__nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem 1.75rem;
+    font-size: 0.95rem;
+  }
+
+  .foot__nav a {
+    text-decoration: none;
+    opacity: 0.8;
+    transition: opacity 0.3s var(--ease);
+  }
+
+  .foot__nav a:hover {
+    opacity: 1;
+    text-decoration: underline;
+    text-underline-offset: 0.3em;
+  }
+
+  .foot__phone {
+    display: grid;
+    gap: 0.15rem;
+    text-decoration: none;
+  }
+
+  .foot__phone-digits {
+    font-family: var(--display);
+    font-size: 1.5rem;
+    font-variation-settings: "opsz" 30, "SOFT" 20, "WONK" 0;
+  }
+
+  .foot__phone-alt {
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    color: var(--drape-pale);
+  }
+
+  .foot__base {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 0.5rem 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid color-mix(in srgb, var(--bone) 15%, transparent);
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.04em;
+    color: color-mix(in srgb, var(--bone) 62%, transparent);
+  }
+
+  .foot__base p {
+    margin: 0;
+  }
+
+  @media (min-width: 48rem) {
+    .foot__inner {
+      grid-template-columns: 1fr auto auto;
+      align-items: start;
+      gap: 3rem;
+    }
+    .foot__nav {
+      flex-direction: column;
+      gap: 0.6rem;
+    }
+  }
+</style>

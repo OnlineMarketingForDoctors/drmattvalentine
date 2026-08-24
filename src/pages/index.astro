@@ -1,0 +1,610 @@
+---
+import { Image } from "astro:assets";
+import Base from "../layouts/Base.astro";
+import Nav from "../components/Nav.astro";
+import Footer from "../components/Footer.astro";
+import ReferBand from "../components/ReferBand.astro";
+import { SITE, STATS } from "../site.config";
+import { valentineCount, valentineStates } from "../data/locations";
+
+import portrait from "../assets/photos/valentine-polo.jpg";
+import airstrip from "../assets/generated/airstrip.webp";
+import procedureRoom from "../assets/generated/procedure-room.webp";
+import leaving from "../assets/generated/leaving.webp";
+
+const stateCount = valentineStates.length;
+
+/* The three commitments, in his own words on the current site. */
+const pillars = [
+  {
+    label: "Comprehensive care",
+    body:
+      "He has spent fifteen years narrowing his practice to this one procedure, " +
+      "and treats the safety and effectiveness of it as the whole job rather than " +
+      "a sideline to general practice.",
+  },
+  {
+    label: "Urgent referrals",
+    body:
+      `Urgent cases get immediate consideration. Most can be accommodated within ` +
+      `${STATS.urgentWeeks} weeks of referral, wherever they sit on the run.`,
+  },
+  {
+    label: "Available for advice",
+    body:
+      "An open invitation to referring doctors: call him. Access to surgical " +
+      "judgement before you refer is often worth more than the referral itself.",
+  },
+];
+
+/* The patient's day, in order. Order is the information here — this is a real
+   sequence with a real clock attached, which is why it carries numbers. */
+const day = [
+  { t: "Arrive", d: "No fasting, no pre-admission, no hospital. He walks in off the street." },
+  { t: "Consent", d: "The conversation happens on the day. Same visit, same room, no second trip." },
+  { t: `${STATS.minutes} minutes`, d: "Local anaesthetic. No scalpel, one small opening, no stitches." },
+  { t: "Drives home", d: "He drove himself in. He drives himself out. No sedation, no escort." },
+];
+---
+
+<Base
+  title="Dr Matt Valentine — No-scalpel vasectomy across QLD, VIC and WA"
+  description="Dr Matt Valentine has performed over 25,000 vasectomies and operates 19 clinics across Queensland, Victoria and Western Australia. Referral information for Australian GPs."
+>
+  <Nav light />
+
+  <main id="main">
+    <!-- ============================================ HERO -->
+    <section class="hero" id="hero">
+      <div class="wrap hero__inner">
+        <div class="hero__text">
+          <p class="tag hero__eyebrow">Vasectomy Australia · QLD · VIC · WA</p>
+          <h1 class="hero__title">He does the travelling.</h1>
+          <p class="lede hero__lede">
+            Dr Matt Valentine performs no-scalpel vasectomy at {valentineCount}
+            clinics across {stateCount} states. Rockhampton, Bendigo, Rockingham —
+            your patient goes to the nearest town, not to a capital city.
+          </p>
+          <div class="hero__actions">
+            <a class="btn" href="/contact#refer">
+              Refer a patient
+              <span class="btn__arrow" aria-hidden="true">→</span>
+            </a>
+            <a class="btn btn--ghost" href="/vasectomy#clinics">Find the nearest clinic</a>
+          </div>
+        </div>
+
+        <div class="hero__media">
+          <Image
+            src={portrait}
+            alt="Dr Matt Valentine, standing, in a navy Vasectomy Australia polo shirt"
+            widths={[420, 700, 1000]}
+            sizes="(min-width: 62rem) 26rem, 70vw"
+            loading="eager"
+            fetchpriority="high"
+            quality={82}
+          />
+          <p class="hero__caption">
+            <span class="tag">Dr Matt Valentine</span>
+            FRACGP · Designated Aviation Medical Examiner
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================ NUMBERS -->
+    <section class="band band--drape figures" id="figures">
+      <div class="wrap">
+        <p class="tag tag--pale" data-reveal>By the numbers</p>
+        <dl class="figures__grid">
+          <div class="fig" data-reveal>
+            <dt>Vasectomies performed</dt>
+            <dd>{STATS.career}</dd>
+          </div>
+          <div class="fig" data-reveal style="--delay:80ms">
+            <dt>Each year</dt>
+            <dd>{STATS.annual}</dd>
+          </div>
+          <div class="fig" data-reveal style="--delay:160ms">
+            <dt>Clinics</dt>
+            <dd>{valentineCount}</dd>
+          </div>
+          <div class="fig" data-reveal style="--delay:240ms">
+            <dt>States</dt>
+            <dd>{stateCount}</dd>
+          </div>
+        </dl>
+      </div>
+    </section>
+
+    <!-- ============================================ ABOUT TEASER -->
+    <section class="band about" id="about">
+      <div class="wrap about__inner">
+        <div class="about__media" data-reveal>
+          <Image
+            src={airstrip}
+            alt="A light aircraft on a regional Australian airstrip at first light"
+            widths={[700, 1100, 1600]}
+            sizes="(min-width: 60rem) 42vw, 90vw"
+            quality={80}
+          />
+        </div>
+        <div class="about__body">
+          <p class="tag" data-reveal>The short version</p>
+          <h2 data-reveal style="--delay:80ms">
+            Five years in the Air Force taught him to work where the patient is.
+          </h2>
+          <p data-reveal style="--delay:160ms">
+            He graduated from Adelaide in 2000, then spent five years in the
+            Royal Australian Air Force as an Aviation Medical Officer —
+            aeromedical evacuation and humanitarian work in East Timor, Bali and
+            the Middle East. He is still a Designated Aviation Medical Examiner.
+          </p>
+          <p data-reveal style="--delay:220ms">
+            He began performing vasectomies in {STATS.startYear} under Dr Greg
+            Silver, then trained in the United States in {STATS.nsvYear} in the
+            no-scalpel technique. The regional travel is not a compromise in his
+            practice. It is the point of it.
+          </p>
+          <a class="arrowlink" href="/about" data-reveal style="--delay:280ms">
+            Read the long version
+            <span class="btn__arrow" aria-hidden="true">→</span>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================ WHY REFER -->
+    <section class="band band--dark why" id="why">
+      <div class="wrap">
+        <p class="tag tag--pale" data-reveal>Why refer here</p>
+        <h2 class="why__title" data-reveal style="--delay:80ms">
+          Three things he will hold himself to.
+        </h2>
+        <div class="why__grid">
+          {
+            pillars.map((p, i) => (
+              <article class="pillar" data-reveal style={`--delay:${140 + i * 90}ms`}>
+                <h3>{p.label}</h3>
+                <p>{p.body}</p>
+              </article>
+            ))
+          }
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================ COVERAGE -->
+    <section class="band coverage" id="coverage">
+      <div class="wrap">
+        <p class="tag" data-reveal>Coverage</p>
+        <h2 data-reveal style="--delay:80ms">{valentineCount} clinics, {stateCount} states.</h2>
+        <p class="lede measure" data-reveal style="--delay:160ms">
+          Brisbane is the base. Everything else is a trip — and the list below is
+          the whole run, not a catchment area drawn on a map.
+        </p>
+
+        <ul class="coverage__states">
+          {
+            valentineStates.map((s, i) => (
+              <li data-reveal style={`--delay:${200 + i * 90}ms`}>
+                <span class="coverage__code">{s.code}</span>
+                <span class="coverage__n">{s.clinics.length}</span>
+                <span class="coverage__areas">
+                  {s.clinics.map((c) => c.area).join(" · ")}
+                </span>
+              </li>
+            ))
+          }
+        </ul>
+
+        <a class="btn btn--ghost coverage__cta" href="/vasectomy#clinics" data-reveal>
+          See every clinic
+          <span class="btn__arrow" aria-hidden="true">→</span>
+        </a>
+      </div>
+    </section>
+
+    <!-- ============================================ THE DAY -->
+    <section class="band band--drape day" id="day">
+      <div class="wrap day__inner">
+        <div class="day__body">
+          <p class="tag tag--pale" data-reveal>Your patient's day</p>
+          <h2 data-reveal style="--delay:80ms">In and out on the same visit.</h2>
+          <p class="lede" data-reveal style="--delay:160ms">
+            Consultation and procedure happen in one appointment. There is no
+            separate consult, no hospital admission, and nothing for your patient
+            to organise beyond getting there.
+          </p>
+        </div>
+
+        <ol class="day__list">
+          {
+            day.map((s, i) => (
+              <li data-reveal style={`--delay:${140 + i * 80}ms`}>
+                <span class="day__n">{String(i + 1).padStart(2, "0")}</span>
+                <span class="day__t">{s.t}</span>
+                <span class="day__d">{s.d}</span>
+              </li>
+            ))
+          }
+        </ol>
+      </div>
+    </section>
+
+    <!-- ============================================ COST -->
+    <section class="band cost" id="cost">
+      <div class="wrap cost__inner">
+        <div class="cost__body">
+          <p class="tag" data-reveal>Cost</p>
+          <h2 data-reveal style="--delay:80ms">{STATS.cost} out of pocket.</h2>
+          <p class="lede measure" data-reveal style="--delay:160ms">
+            That is the figure after the Medicare rebate, and it is the figure at
+            every clinic on the list. The same procedure performed by a urologist
+            can run to $5,000.
+          </p>
+          <p class="cost__note" data-reveal style="--delay:220ms">
+            Quoted so you can answer the question in the room, before your
+            patient has to ring anyone.
+          </p>
+        </div>
+        <div class="cost__media" data-reveal style="--delay:120ms">
+          <Image
+            src={leaving}
+            alt="A patient walking out of a suburban medical centre to the car park"
+            widths={[700, 1100, 1600]}
+            sizes="(min-width: 60rem) 42vw, 90vw"
+            quality={80}
+          />
+        </div>
+      </div>
+    </section>
+
+    <ReferBand />
+  </main>
+
+  <Footer />
+</Base>
+
+<style>
+  /* ---- hero ---------------------------------------------------------- */
+  .hero {
+    padding-top: clamp(8rem, 17vh, 12rem);
+    padding-bottom: var(--section-y);
+    background: var(--bone);
+  }
+
+  .hero__inner {
+    display: grid;
+    gap: clamp(2.5rem, 6vw, 4.5rem);
+    align-items: center;
+  }
+
+  .hero__eyebrow {
+    animation: riseUp 0.8s var(--ease-out) 0.1s both;
+  }
+
+  .hero__title {
+    margin-top: 0.32em;
+    max-width: 11ch;
+    animation: riseUp 0.95s var(--ease-out) 0.22s both;
+  }
+
+  .hero__lede {
+    margin-top: 1.5rem;
+    max-width: 40ch;
+    animation: riseUp 0.95s var(--ease-out) 0.34s both;
+  }
+
+  .hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.9rem;
+    margin-top: 2.4rem;
+    animation: riseUp 0.95s var(--ease-out) 0.46s both;
+  }
+
+  .hero__media {
+    position: relative;
+    animation: riseUp 1.1s var(--ease-out) 0.3s both;
+  }
+
+  .hero__media :global(img) {
+    width: 100%;
+    height: auto;
+    background: var(--drape-wash);
+  }
+
+  .hero__caption {
+    margin-top: 1rem;
+    font-size: 0.88rem;
+    color: var(--ink-soft);
+  }
+
+  .hero__caption .tag {
+    display: block;
+    color: var(--drape);
+    margin-bottom: 0.15rem;
+  }
+
+  @keyframes riseUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  /* ---- figures ------------------------------------------------------- */
+  .figures__grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 2.25rem 1.5rem;
+    margin: clamp(2rem, 4vw, 3rem) 0 0;
+  }
+
+  .fig dt {
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    font-weight: 500;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--drape-pale);
+  }
+
+  .fig dd {
+    margin: 0.3rem 0 0;
+    font-family: var(--display);
+    font-size: clamp(2.4rem, 1.4rem + 4vw, 4.5rem);
+    font-weight: 600;
+    font-variation-settings: "opsz" 96, "SOFT" 20, "WONK" 1;
+    line-height: 0.95;
+    letter-spacing: -0.025em;
+  }
+
+  /* ---- about --------------------------------------------------------- */
+  .about__inner {
+    display: grid;
+    gap: clamp(2.5rem, 5vw, 4rem);
+    align-items: center;
+  }
+
+  .about__media :global(img) {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+  }
+
+  .about__body h2 {
+    margin-top: 0.3em;
+    margin-bottom: 1.3rem;
+    max-width: 18ch;
+  }
+
+  .about__body p {
+    margin-bottom: 1.1rem;
+    max-width: 46ch;
+    color: var(--ink-soft);
+  }
+
+  .arrowlink {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55em;
+    margin-top: 0.6rem;
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--iodine);
+    text-decoration: none;
+  }
+
+  .arrowlink:hover {
+    text-decoration: underline;
+    text-underline-offset: 0.35em;
+  }
+
+  .arrowlink .btn__arrow {
+    transition: transform 0.4s var(--ease-out);
+  }
+
+  .arrowlink:hover .btn__arrow {
+    transform: translateX(4px);
+  }
+
+  /* ---- why ----------------------------------------------------------- */
+  .why__title {
+    margin-top: 0.3em;
+    max-width: 16ch;
+  }
+
+  .why__grid {
+    display: grid;
+    gap: 2.5rem;
+    margin-top: clamp(2.5rem, 5vw, 4rem);
+  }
+
+  .pillar h3 {
+    padding-bottom: 0.9rem;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid color-mix(in srgb, var(--bone) 22%, transparent);
+  }
+
+  .pillar p {
+    color: var(--drape-pale);
+    font-size: 0.98rem;
+  }
+
+  /* ---- coverage ------------------------------------------------------ */
+  .coverage h2 {
+    margin-top: 0.3em;
+  }
+
+  .coverage .lede {
+    margin-top: 1.2rem;
+  }
+
+  .coverage__states {
+    list-style: none;
+    margin: clamp(2rem, 4vw, 3rem) 0 0;
+    padding: 0;
+    border-top: 1px solid color-mix(in srgb, var(--ink) 14%, transparent);
+  }
+
+  .coverage__states li {
+    display: grid;
+    grid-template-columns: 3.5rem 3rem;
+    gap: 0.4rem 1rem;
+    padding: 1.4rem 0;
+    border-bottom: 1px solid color-mix(in srgb, var(--ink) 12%, transparent);
+  }
+
+  .coverage__code {
+    font-family: var(--display);
+    font-size: 1.6rem;
+    font-weight: 600;
+    font-variation-settings: "opsz" 36, "SOFT" 20, "WONK" 0;
+    line-height: 1;
+  }
+
+  .coverage__n {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    color: var(--drape);
+    align-self: center;
+  }
+
+  .coverage__areas {
+    grid-column: 1 / -1;
+    font-size: 0.9rem;
+    color: var(--ink-soft);
+    line-height: 1.55;
+  }
+
+  .coverage__cta {
+    margin-top: 2.5rem;
+  }
+
+  /* ---- the day ------------------------------------------------------- */
+  .day__inner {
+    display: grid;
+    gap: clamp(2.5rem, 5vw, 4rem);
+  }
+
+  .day__body h2 {
+    margin-top: 0.3em;
+    max-width: 14ch;
+  }
+
+  .day__body .lede {
+    margin-top: 1.2rem;
+    max-width: 42ch;
+  }
+
+  .day__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .day__list li {
+    display: grid;
+    grid-template-columns: 2.75rem 1fr;
+    gap: 0.2rem 1rem;
+    padding: 1.25rem 0;
+    border-top: 1px solid color-mix(in srgb, var(--bone) 20%, transparent);
+  }
+
+  .day__n {
+    grid-row: span 2;
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    color: var(--drape-pale);
+    padding-top: 0.45em;
+  }
+
+  .day__t {
+    font-family: var(--display);
+    font-size: 1.3rem;
+    font-weight: 600;
+    font-variation-settings: "opsz" 30, "SOFT" 20, "WONK" 0;
+    line-height: 1.2;
+  }
+
+  .day__d {
+    font-size: 0.94rem;
+    color: var(--drape-pale);
+  }
+
+  /* ---- cost ---------------------------------------------------------- */
+  .cost__inner {
+    display: grid;
+    gap: clamp(2.5rem, 5vw, 4rem);
+    align-items: center;
+  }
+
+  .cost__body h2 {
+    margin-top: 0.3em;
+  }
+
+  .cost__body .lede {
+    margin-top: 1.2rem;
+  }
+
+  .cost__note {
+    margin-top: 1.4rem;
+    max-width: 38ch;
+    font-size: 0.92rem;
+    color: var(--ink-soft);
+  }
+
+  .cost__media :global(img) {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 3 / 2;
+    object-fit: cover;
+  }
+
+  /* ---- breakpoints --------------------------------------------------- */
+  @media (min-width: 40rem) {
+    .figures__grid {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+    .coverage__states li {
+      grid-template-columns: 4rem 3.5rem 1fr;
+      align-items: baseline;
+      gap: 1.5rem;
+    }
+    .coverage__areas {
+      grid-column: auto;
+    }
+  }
+
+  @media (min-width: 62rem) {
+    .hero__inner {
+      grid-template-columns: 1fr 26rem;
+    }
+    .about__inner {
+      grid-template-columns: 42fr 58fr;
+    }
+    .cost__inner {
+      grid-template-columns: 58fr 42fr;
+    }
+    .why__grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 3rem;
+    }
+    .day__inner {
+      grid-template-columns: 1fr 1fr;
+      align-items: start;
+      gap: 5rem;
+    }
+  }
+</style>
