@@ -71,9 +71,12 @@ Aviation Medical Examiner. Do not add letters beyond those without asking.
 ## Images
 
 `src/assets/photos/` holds real photographs of Dr Valentine, supplied by the
-client. `src/assets/generated/` holds AI-generated images of **rooms,
-instruments and landscape only**.
+client. `src/assets/generated/` holds AI-generated images — rooms, instruments
+and landscape, plus three that depict Dr Valentine himself (`hero`, `desk`,
+`corridor`), generated from his real photographs as reference and approved by
+the client for use.
 
-Do not generate images depicting Dr Valentine. Generated likenesses came out
-close but not exact, which on a real doctor's professional site is a
-misrepresentation. Anywhere he appears, use a real photograph.
+The generated likeness is close but not an exact match to his real photographs
+— the glasses in particular differ. That was raised and the client accepted it,
+so treat the three as approved. Re-check with the client before adding more,
+and keep real photographs as the default where one exists for the job.

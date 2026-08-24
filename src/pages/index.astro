@@ -7,9 +7,8 @@ import ReferBand from "../components/ReferBand.astro";
 import { SITE, STATS } from "../site.config";
 import { valentineCount, valentineStates } from "../data/locations";
 
-import portrait from "../assets/photos/valentine-polo.jpg";
+import heroImg from "../assets/generated/hero.webp";
 import airstrip from "../assets/generated/airstrip.webp";
-import procedureRoom from "../assets/generated/procedure-room.webp";
 import leaving from "../assets/generated/leaving.webp";
 
 const stateCount = valentineStates.length;
@@ -51,43 +50,40 @@ const day = [
   title="Dr Matt Valentine — No-scalpel vasectomy across QLD, VIC and WA"
   description="Dr Matt Valentine has performed over 25,000 vasectomies and operates 19 clinics across Queensland, Victoria and Western Australia. Referral information for Australian GPs."
 >
-  <Nav light />
+  <Nav />
 
   <main id="main">
     <!-- ============================================ HERO -->
     <section class="hero" id="hero">
-      <div class="wrap hero__inner">
-        <div class="hero__text">
-          <p class="tag hero__eyebrow">Vasectomy Australia · QLD · VIC · WA</p>
-          <h1 class="hero__title">He does the travelling.</h1>
-          <p class="lede hero__lede">
-            Dr Matt Valentine performs no-scalpel vasectomy at {valentineCount}
-            clinics across {stateCount} states. Rockhampton, Bendigo, Rockingham —
-            your patient goes to the nearest town, not to a capital city.
-          </p>
-          <div class="hero__actions">
-            <a class="btn" href="/contact#refer">
-              Refer a patient
-              <span class="btn__arrow" aria-hidden="true">→</span>
-            </a>
-            <a class="btn btn--ghost" href="/vasectomy#clinics">Find the nearest clinic</a>
-          </div>
-        </div>
+      <div class="hero__media">
+        <Image
+          src={heroImg}
+          alt="Dr Matt Valentine in navy scrubs in a day-procedure room"
+          widths={[900, 1400, 2000, 2600]}
+          sizes="100vw"
+          loading="eager"
+          fetchpriority="high"
+          quality={82}
+        />
+      </div>
+      <div class="hero__scrim"></div>
 
-        <div class="hero__media">
-          <Image
-            src={portrait}
-            alt="Dr Matt Valentine, standing, in a navy Vasectomy Australia polo shirt"
-            widths={[420, 700, 1000]}
-            sizes="(min-width: 62rem) 26rem, 70vw"
-            loading="eager"
-            fetchpriority="high"
-            quality={82}
-          />
-          <p class="hero__caption">
-            <span class="tag">Dr Matt Valentine</span>
-            FRACGP · Designated Aviation Medical Examiner
-          </p>
+      <div class="wrap hero__inner">
+        <p class="tag tag--pale hero__eyebrow">Vasectomy Australia · QLD · VIC · WA</p>
+        <h1 class="hero__title">He does the travelling.</h1>
+        <p class="lede hero__lede">
+          Dr Matt Valentine performs no-scalpel vasectomy at {valentineCount}
+          clinics across {stateCount} states. Rockhampton, Bendigo, Rockingham —
+          your patient goes to the nearest town, not to a capital city.
+        </p>
+        <div class="hero__actions">
+          <a class="btn" href="/contact#refer">
+            Refer a patient
+            <span class="btn__arrow" aria-hidden="true">→</span>
+          </a>
+          <a class="btn btn--ghost btn--on-dark" href="/vasectomy#clinics">
+            Find the nearest clinic
+          </a>
         </div>
       </div>
     </section>
@@ -269,31 +265,75 @@ const day = [
 <style>
   /* ---- hero ---------------------------------------------------------- */
   .hero {
-    padding-top: clamp(8rem, 17vh, 12rem);
-    padding-bottom: var(--section-y);
-    background: var(--bone);
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    min-height: min(88svh, 50rem);
+    background: var(--ink);
+    color: var(--bone);
+    overflow: hidden;
+  }
+
+  .hero__media {
+    position: absolute;
+    inset: 0;
+  }
+
+  .hero__media :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 30%;
+    animation: heroIn 1.6s var(--ease-out) both;
+  }
+
+  @keyframes heroIn {
+    from {
+      transform: scale(1.06);
+      opacity: 0;
+    }
+    to {
+      transform: none;
+      opacity: 1;
+    }
+  }
+
+  /* He stands right of centre in the frame, so the scrim is weighted left and
+     the type sits on the empty half rather than across him. */
+  .hero__scrim {
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(
+        to right,
+        rgba(14, 31, 27, 0.93) 0%,
+        rgba(14, 31, 27, 0.6) 44%,
+        rgba(14, 31, 27, 0.1) 76%
+      ),
+      linear-gradient(to top, rgba(14, 31, 27, 0.9) 0%, transparent 52%);
   }
 
   .hero__inner {
-    display: grid;
-    gap: clamp(2.5rem, 6vw, 4.5rem);
-    align-items: center;
+    position: relative;
+    padding-top: clamp(8rem, 18vh, 11rem);
+    padding-bottom: clamp(3rem, 8vh, 5.5rem);
   }
 
   .hero__eyebrow {
-    animation: riseUp 0.8s var(--ease-out) 0.1s both;
+    animation: riseUp 0.8s var(--ease-out) 0.25s both;
   }
 
   .hero__title {
     margin-top: 0.32em;
     max-width: 11ch;
-    animation: riseUp 0.95s var(--ease-out) 0.22s both;
+    animation: riseUp 0.95s var(--ease-out) 0.37s both;
   }
 
   .hero__lede {
     margin-top: 1.5rem;
     max-width: 40ch;
-    animation: riseUp 0.95s var(--ease-out) 0.34s both;
+    color: var(--drape-pale);
+    animation: riseUp 0.95s var(--ease-out) 0.49s both;
   }
 
   .hero__actions {
@@ -301,30 +341,18 @@ const day = [
     flex-wrap: wrap;
     gap: 0.9rem;
     margin-top: 2.4rem;
-    animation: riseUp 0.95s var(--ease-out) 0.46s both;
+    animation: riseUp 0.95s var(--ease-out) 0.61s both;
   }
 
-  .hero__media {
-    position: relative;
-    animation: riseUp 1.1s var(--ease-out) 0.3s both;
-  }
-
-  .hero__media :global(img) {
-    width: 100%;
-    height: auto;
-    background: var(--drape-wash);
-  }
-
-  .hero__caption {
-    margin-top: 1rem;
-    font-size: 0.88rem;
-    color: var(--ink-soft);
-  }
-
-  .hero__caption .tag {
-    display: block;
-    color: var(--drape);
-    margin-bottom: 0.15rem;
+  @media (max-width: 47.99rem) {
+    .hero__scrim {
+      background: linear-gradient(
+        to bottom,
+        rgba(14, 31, 27, 0.82) 0%,
+        rgba(14, 31, 27, 0.6) 38%,
+        rgba(14, 31, 27, 0.94) 100%
+      );
+    }
   }
 
   @keyframes riseUp {
@@ -588,9 +616,6 @@ const day = [
   }
 
   @media (min-width: 62rem) {
-    .hero__inner {
-      grid-template-columns: 1fr 26rem;
-    }
     .about__inner {
       grid-template-columns: 42fr 58fr;
     }
