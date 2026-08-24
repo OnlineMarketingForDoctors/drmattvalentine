@@ -227,6 +227,13 @@ section[id] {
   color: var(--bone);
 }
 
+/* .lede carries its own dark ink colour, which on the drape background is
+   green-on-green and effectively invisible. Both dark bands need the override,
+   not just .band--dark. */
+.band--drape .lede {
+  color: var(--drape-pale);
+}
+
 /* a hairline that reads as a scale mark, not decoration */
 .rule {
   height: 1px;

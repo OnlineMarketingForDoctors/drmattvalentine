@@ -179,6 +179,12 @@ const allValentine = valentineStates.flatMap((s) =>
     border-top: 1px solid color-mix(in srgb, var(--ink) 14%, transparent);
   }
 
+  /* An author `display` beats the hidden attribute's UA `display: none`, so
+     without this the filter sets .hidden and nothing visibly changes. */
+  .clinic[hidden] {
+    display: none;
+  }
+
   .clinic {
     display: grid;
     grid-template-columns: 3.25rem 1fr;

@@ -8,7 +8,7 @@ import { SITE, STATS } from "../site.config";
 import { valentineCount, valentineStates } from "../data/locations";
 
 import heroImg from "../assets/generated/hero.webp";
-import airstrip from "../assets/generated/airstrip.webp";
+import portrait from "../assets/photos/valentine-polo.jpg";
 import leaving from "../assets/generated/leaving.webp";
 
 const stateCount = valentineStates.length;
@@ -18,7 +18,7 @@ const pillars = [
   {
     label: "Comprehensive care",
     body:
-      "He has spent fifteen years narrowing his practice to this one procedure, " +
+      "He has spent the years since 2008 narrowing his practice to this one procedure, " +
       "and treats the safety and effectiveness of it as the whole job rather than " +
       "a sideline to general practice.",
   },
@@ -50,7 +50,7 @@ const day = [
   title="Dr Matt Valentine — No-scalpel vasectomy across QLD, VIC and WA"
   description="Dr Matt Valentine has performed over 25,000 vasectomies and operates 19 clinics across Queensland, Victoria and Western Australia. Referral information for Australian GPs."
 >
-  <Nav />
+  <Nav light />
 
   <main id="main">
     <!-- ============================================ HERO -->
@@ -58,7 +58,7 @@ const day = [
       <div class="hero__media">
         <Image
           src={heroImg}
-          alt="Dr Matt Valentine in navy scrubs in a day-procedure room"
+          alt="Dr Matt Valentine, standing, in navy surgical scrubs"
           widths={[900, 1400, 2000, 2600]}
           sizes="100vw"
           loading="eager"
@@ -69,19 +69,19 @@ const day = [
       <div class="hero__scrim"></div>
 
       <div class="wrap hero__inner">
-        <p class="tag tag--pale hero__eyebrow">Vasectomy Australia · QLD · VIC · WA</p>
-        <h1 class="hero__title">He does the travelling.</h1>
+        <p class="tag hero__eyebrow">Vasectomy Australia · QLD · VIC · WA</p>
+        <h1 class="hero__title">One procedure, done properly.</h1>
         <p class="lede hero__lede">
-          Dr Matt Valentine performs no-scalpel vasectomy at {valentineCount}
-          clinics across {stateCount} states. Rockhampton, Bendigo, Rockingham —
-          your patient goes to the nearest town, not to a capital city.
+          Dr Matt Valentine has performed {STATS.career} no-scalpel vasectomies
+          and does around {STATS.annual} a year, across {valentineCount} clinics
+          in Queensland, Victoria and Western Australia.
         </p>
         <div class="hero__actions">
-          <a class="btn" href="/contact#refer">
+          <a class="btn" href="/refer">
             Refer a patient
             <span class="btn__arrow" aria-hidden="true">→</span>
           </a>
-          <a class="btn btn--ghost btn--on-dark" href="/vasectomy#clinics">
+          <a class="btn btn--ghost" href="/vasectomy#clinics">
             Find the nearest clinic
           </a>
         </div>
@@ -118,17 +118,17 @@ const day = [
       <div class="wrap about__inner">
         <div class="about__media" data-reveal>
           <Image
-            src={airstrip}
-            alt="A light aircraft on a regional Australian airstrip at first light"
-            widths={[700, 1100, 1600]}
+            src={portrait}
+            alt="Dr Matt Valentine in a navy Vasectomy Australia polo shirt"
+            widths={[500, 800, 1200]}
             sizes="(min-width: 60rem) 42vw, 90vw"
-            quality={80}
+            quality={82}
           />
         </div>
         <div class="about__body">
           <p class="tag" data-reveal>The short version</p>
           <h2 data-reveal style="--delay:80ms">
-            Five years in the Air Force taught him to work where the patient is.
+            Twenty-five years of medicine, narrowed to one procedure.
           </h2>
           <p data-reveal style="--delay:160ms">
             He graduated from Adelaide in 2000, then spent five years in the
@@ -139,8 +139,8 @@ const day = [
           <p data-reveal style="--delay:220ms">
             He began performing vasectomies in {STATS.startYear} under Dr Greg
             Silver, then trained in the United States in {STATS.nsvYear} in the
-            no-scalpel technique. The regional travel is not a compromise in his
-            practice. It is the point of it.
+            no-scalpel technique. It has been the centre of his practice ever
+            since.
           </p>
           <a class="arrowlink" href="/about" data-reveal style="--delay:280ms">
             Read the long version
@@ -264,13 +264,16 @@ const day = [
 
 <style>
   /* ---- hero ---------------------------------------------------------- */
+  /* The hero photograph is bright and airy with the subject held to the right,
+     so this hero runs light — ink type on the empty wall — rather than the
+     dark scrim the interior page heroes use. */
   .hero {
     position: relative;
     display: flex;
     align-items: flex-end;
     min-height: min(88svh, 50rem);
-    background: var(--ink);
-    color: var(--bone);
+    background: var(--bone);
+    color: var(--ink);
     overflow: hidden;
   }
 
@@ -298,19 +301,26 @@ const day = [
     }
   }
 
-  /* He stands right of centre in the frame, so the scrim is weighted left and
-     the type sits on the empty half rather than across him. */
+  /* He is held to the right of frame, so the wash lifts the empty left side
+     just enough to seat ink type on it without touching him. */
   .hero__scrim {
     position: absolute;
     inset: 0;
     background:
+      /* a pale wash under the bar, so the ink nav type never lands on his
+         hair — the phone number sits directly over it otherwise */
+      linear-gradient(
+        to bottom,
+        rgba(236, 238, 234, 0.88) 0%,
+        rgba(236, 238, 234, 0.5) 9%,
+        rgba(236, 238, 234, 0) 17%
+      ),
       linear-gradient(
         to right,
-        rgba(14, 31, 27, 0.93) 0%,
-        rgba(14, 31, 27, 0.6) 44%,
-        rgba(14, 31, 27, 0.1) 76%
-      ),
-      linear-gradient(to top, rgba(14, 31, 27, 0.9) 0%, transparent 52%);
+        rgba(236, 238, 234, 0.92) 0%,
+        rgba(236, 238, 234, 0.72) 38%,
+        rgba(236, 238, 234, 0) 66%
+      );
   }
 
   .hero__inner {
@@ -332,7 +342,7 @@ const day = [
   .hero__lede {
     margin-top: 1.5rem;
     max-width: 40ch;
-    color: var(--drape-pale);
+    color: var(--ink-soft);
     animation: riseUp 0.95s var(--ease-out) 0.49s both;
   }
 
@@ -348,9 +358,9 @@ const day = [
     .hero__scrim {
       background: linear-gradient(
         to bottom,
-        rgba(14, 31, 27, 0.82) 0%,
-        rgba(14, 31, 27, 0.6) 38%,
-        rgba(14, 31, 27, 0.94) 100%
+        rgba(236, 238, 234, 0.95) 0%,
+        rgba(236, 238, 234, 0.86) 46%,
+        rgba(236, 238, 234, 0.55) 100%
       );
     }
   }
@@ -403,8 +413,9 @@ const day = [
   .about__media :global(img) {
     width: 100%;
     height: auto;
-    aspect-ratio: 4 / 3;
+    aspect-ratio: 3 / 4;
     object-fit: cover;
+    background: var(--drape-wash);
   }
 
   .about__body h2 {

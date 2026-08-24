@@ -32,15 +32,17 @@ const { eyebrow, title, lede, image, imageAlt, focus = "center", crumb } = Astro
   <div class="phero__scrim"></div>
 
   <div class="wrap phero__inner">
+    <p class="tag tag--pale phero__eyebrow">{eyebrow}</p>
+    <h1 class="phero__title">{title}</h1>
+    {lede && <p class="lede phero__lede">{lede}</p>}
+
+    {/* Sits bottom-right of the banner: it is wayfinding, not the headline,
+        so it stays out of the reading order of the title block. */}
     <nav class="phero__crumb" aria-label="Breadcrumb">
       <a href="/">Home</a>
       <span aria-hidden="true">/</span>
       <span aria-current="page">{crumb}</span>
     </nav>
-
-    <p class="tag tag--pale phero__eyebrow">{eyebrow}</p>
-    <h1 class="phero__title">{title}</h1>
-    {lede && <p class="lede phero__lede">{lede}</p>}
   </div>
 </section>
 
@@ -100,8 +102,23 @@ const { eyebrow, title, lede, image, imageAlt, focus = "center", crumb } = Astro
     letter-spacing: 0.14em;
     text-transform: uppercase;
     color: color-mix(in srgb, var(--drape-pale) 85%, transparent);
-    margin-bottom: 1.6rem;
-    animation: riseIn 0.8s var(--ease-out) 0.2s both;
+    margin-top: 2.5rem;
+    animation: riseIn 0.8s var(--ease-out) 0.7s both;
+  }
+
+  /* Once there is room, it tucks into the bottom-right corner of the banner
+     rather than sitting under the lede. */
+  @media (min-width: 48rem) {
+    .phero__inner {
+      position: relative;
+    }
+
+    .phero__crumb {
+      position: absolute;
+      right: var(--gutter);
+      bottom: clamp(2.5rem, 6vh, 4.5rem);
+      margin-top: 0;
+    }
   }
 
   .phero__crumb a {

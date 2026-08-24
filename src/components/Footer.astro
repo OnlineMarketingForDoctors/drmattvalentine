@@ -27,7 +27,14 @@ const year = new Date().getFullYear();
 
   <div class="wrap foot__base">
     <p>© {year} Vasectomy Australia. All rights reserved.</p>
-    <p>Powered by Online Marketing For Doctors</p>
+    <p>
+      Powered by <a
+        class="foot__omd"
+        href="https://onlinemarketingfordoctors.com/"
+        rel="noopener"
+        target="_blank">Online Marketing For Doctors</a
+      >
+    </p>
   </div>
 </footer>
 
@@ -106,6 +113,19 @@ const year = new Date().getFullYear();
 
   .foot__base p {
     margin: 0;
+  }
+
+  .foot__omd {
+    color: inherit;
+    text-decoration: underline;
+    text-underline-offset: 0.3em;
+    text-decoration-color: color-mix(in srgb, currentColor 40%, transparent);
+    transition: color 0.3s var(--ease), text-decoration-color 0.3s var(--ease);
+  }
+
+  .foot__omd:hover {
+    color: var(--bone);
+    text-decoration-color: currentColor;
   }
 
   @media (min-width: 48rem) {

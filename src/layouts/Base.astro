@@ -50,6 +50,19 @@ const { title, description } = Astro.props;
     <a class="skip" href="#main">Skip to content</a>
     <slot />
 
+    {/* Appears once you are far enough down that the nav has scrolled away. */}
+    <button class="totop" type="button" data-totop hidden aria-label="Back to top">
+      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+        <path
+          d="M12 19V5M12 5l-6 6M12 5l6 6"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.8"
+          stroke-linecap="round"
+          stroke-linejoin="round"></path>
+      </svg>
+    </button>
+
     <script>
       // Scroll reveals. One observer, unobserve after firing.
       const reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -70,6 +83,30 @@ const { title, description } = Astro.props;
       } else {
         document.querySelectorAll("[data-reveal]").forEach((el) => el.classList.add("is-in"));
       }
+
+      // Back to top. Hidden until you are a screen and a half down, so it
+      // never competes with the hero.
+      const toTop = document.querySelector<HTMLButtonElement>("[data-totop]");
+      if (toTop) {
+        const threshold = () => window.innerHeight * 1.5;
+        const sync = () => {
+          const show = window.scrollY > threshold();
+          toTop.hidden = !show;
+          toTop.classList.toggle("is-in", show);
+        };
+        sync();
+        window.addEventListener("scroll", sync, { passive: true });
+
+        toTop.addEventListener("click", () => {
+          window.scrollTo({
+            top: 0,
+            behavior: reduced.matches ? "auto" : "smooth",
+          });
+          // Send focus somewhere sensible rather than leaving it on a button
+          // that is about to disappear.
+          document.querySelector<HTMLElement>(".skip")?.focus({ preventScroll: true });
+        });
+      }
     </script>
 
     <style>
@@ -86,6 +123,54 @@ const { title, description } = Astro.props;
       }
       .skip:focus {
         left: 0;
+      }
+
+      /* Same trap as the clinic filter: `display: grid` below would override
+         the hidden attribute, leaving an invisible but clickable button. */
+      .totop[hidden] {
+        display: none;
+      }
+
+      .totop {
+        position: fixed;
+        right: clamp(1rem, 3vw, 2.25rem);
+        bottom: clamp(1rem, 3vw, 2.25rem);
+        z-index: 40;
+        display: grid;
+        place-items: center;
+        width: 3rem;
+        height: 3rem;
+        padding: 0;
+        color: var(--bone-pure);
+        background: var(--drape-deep);
+        border: 1px solid color-mix(in srgb, var(--bone) 22%, transparent);
+        border-radius: 50%;
+        cursor: pointer;
+        opacity: 0;
+        transform: translateY(10px);
+        transition: opacity 0.4s var(--ease), transform 0.4s var(--ease-out),
+          background-color 0.3s var(--ease);
+      }
+
+      .totop.is-in {
+        opacity: 1;
+        transform: none;
+      }
+
+      .totop:hover {
+        background: var(--iodine);
+      }
+
+      .totop svg {
+        width: 1.15rem;
+        height: 1.15rem;
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .totop {
+          transition: none;
+          transform: none;
+        }
       }
     </style>
   </body>

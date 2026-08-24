@@ -16,6 +16,8 @@ export const SITE = {
   phoneHref: 'tel:1800764763',
   email: 'info@vasectomyaustralia.com.au',
   facebook: 'https://www.facebook.com/vasectomyaustralia',
+  /** Patient-facing network site — where non-GPs are sent to book. */
+  vasectomyAustralia: 'https://vasectomyaustralia.com.au/',
 } as const;
 
 /**
