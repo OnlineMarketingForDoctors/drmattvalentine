@@ -10,6 +10,7 @@ import { valentineCount, valentineStates } from "../data/locations";
 import heroImg from "../assets/generated/hero.webp";
 import portrait from "../assets/photos/valentine-polo.jpg";
 import leaving from "../assets/generated/leaving.webp";
+import drape from "../assets/generated/drape.webp";
 
 const stateCount = valentineStates.length;
 
@@ -152,6 +153,19 @@ const day = [
 
     <!-- ============================================ WHY REFER -->
     <section class="band band--dark why" id="why">
+      {/* Surgical drape, which is where this palette comes from in the first
+          place. Held well back so it reads as texture, not as a picture. */}
+      <div class="why__bg" aria-hidden="true">
+        <Image
+          src={drape}
+          alt=""
+          widths={[900, 1600, 2400]}
+          sizes="100vw"
+          loading="lazy"
+          quality={72}
+        />
+      </div>
+
       <div class="wrap">
         <p class="tag tag--pale" data-reveal>Why refer here</p>
         <h2 class="why__title" data-reveal style="--delay:80ms">
@@ -486,6 +500,42 @@ const day = [
   }
 
   /* ---- why ----------------------------------------------------------- */
+  .why {
+    position: relative;
+    isolation: isolate;
+  }
+
+  .why__bg {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    z-index: -1;
+  }
+
+  .why__bg :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* The texture is already dark, but text contrast cannot depend on what a
+     photograph happens to be doing, so an ink veil sets the floor. */
+  .why__bg::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      to right,
+      rgba(14, 31, 27, 0.93) 0%,
+      rgba(14, 31, 27, 0.86) 55%,
+      rgba(14, 31, 27, 0.9) 100%
+    );
+  }
+
+  .why > .wrap {
+    position: relative;
+  }
+
   .why__title {
     margin-top: 0.3em;
     max-width: 16ch;
