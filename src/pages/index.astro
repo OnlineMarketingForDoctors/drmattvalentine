@@ -50,7 +50,7 @@ const day = [
   title="Dr Matt Valentine — No-scalpel vasectomy across QLD, VIC and WA"
   description="Dr Matt Valentine has performed over 25,000 vasectomies and operates 19 clinics across Queensland, Victoria and Western Australia. Referral information for Australian GPs."
 >
-  <Nav light />
+  <Nav />
 
   <main id="main">
     <!-- ============================================ HERO -->
@@ -69,7 +69,7 @@ const day = [
       <div class="hero__scrim"></div>
 
       <div class="wrap hero__inner">
-        <p class="tag hero__eyebrow">Vasectomy Australia · QLD · VIC · WA</p>
+        <p class="tag tag--pale hero__eyebrow">Vasectomy Australia · QLD · VIC · WA</p>
         <h1 class="hero__title">One procedure, done properly.</h1>
         <p class="lede hero__lede">
           Dr Matt Valentine has performed {STATS.career} no-scalpel vasectomies
@@ -81,7 +81,7 @@ const day = [
             Refer a patient
             <span class="btn__arrow" aria-hidden="true">→</span>
           </a>
-          <a class="btn btn--ghost" href="/vasectomy#clinics">
+          <a class="btn btn--ghost btn--on-dark" href="/vasectomy#clinics">
             Find the nearest clinic
           </a>
         </div>
@@ -264,16 +264,15 @@ const day = [
 
 <style>
   /* ---- hero ---------------------------------------------------------- */
-  /* The hero photograph is bright and airy with the subject held to the right,
-     so this hero runs light — ink type on the empty wall — rather than the
-     dark scrim the interior page heroes use. */
+  /* Deep sage-green room with the subject held right, so the type sits on
+     the empty left wall under a scrim weighted to that side. */
   .hero {
     position: relative;
     display: flex;
     align-items: flex-end;
     min-height: min(88svh, 50rem);
-    background: var(--bone);
-    color: var(--ink);
+    background: var(--ink);
+    color: var(--bone);
     overflow: hidden;
   }
 
@@ -307,20 +306,13 @@ const day = [
     position: absolute;
     inset: 0;
     background:
-      /* a pale wash under the bar, so the ink nav type never lands on his
-         hair — the phone number sits directly over it otherwise */
-      linear-gradient(
-        to bottom,
-        rgba(236, 238, 234, 0.88) 0%,
-        rgba(236, 238, 234, 0.5) 9%,
-        rgba(236, 238, 234, 0) 17%
-      ),
       linear-gradient(
         to right,
-        rgba(236, 238, 234, 0.92) 0%,
-        rgba(236, 238, 234, 0.72) 38%,
-        rgba(236, 238, 234, 0) 66%
-      );
+        rgba(14, 31, 27, 0.88) 0%,
+        rgba(14, 31, 27, 0.62) 42%,
+        rgba(14, 31, 27, 0.08) 72%
+      ),
+      linear-gradient(to top, rgba(14, 31, 27, 0.7) 0%, transparent 46%);
   }
 
   .hero__inner {
@@ -342,7 +334,7 @@ const day = [
   .hero__lede {
     margin-top: 1.5rem;
     max-width: 40ch;
-    color: var(--ink-soft);
+    color: var(--drape-pale);
     animation: riseUp 0.95s var(--ease-out) 0.49s both;
   }
 
@@ -358,9 +350,9 @@ const day = [
     .hero__scrim {
       background: linear-gradient(
         to bottom,
-        rgba(236, 238, 234, 0.95) 0%,
-        rgba(236, 238, 234, 0.86) 46%,
-        rgba(236, 238, 234, 0.55) 100%
+        rgba(14, 31, 27, 0.78) 0%,
+        rgba(14, 31, 27, 0.58) 40%,
+        rgba(14, 31, 27, 0.92) 100%
       );
     }
   }
