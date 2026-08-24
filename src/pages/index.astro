@@ -346,14 +346,53 @@ const day = [
     animation: riseUp 0.95s var(--ease-out) 0.61s both;
   }
 
+  /* On a phone the type has nowhere to hide on a landscape frame, so the
+     hero stacks instead: photograph full-bleed on top, dissolving into the
+     ink ground, with the words below it rather than over it. */
   @media (max-width: 47.99rem) {
-    .hero__scrim {
+    .hero {
+      display: block;
+      min-height: 0;
+    }
+
+    .hero__media {
+      position: relative;
+      inset: auto;
+      height: min(52svh, 24rem);
+    }
+
+    /* he sits right of frame, so bias the crop toward him */
+    .hero__media :global(img) {
+      object-position: 68% 22%;
+    }
+
+    /* the dissolve — image to solid ink, no visible seam */
+    .hero__media::after {
+      content: "";
+      position: absolute;
+      inset: auto 0 0 0;
+      height: 42%;
       background: linear-gradient(
         to bottom,
-        rgba(14, 31, 27, 0.78) 0%,
-        rgba(14, 31, 27, 0.58) 40%,
-        rgba(14, 31, 27, 0.92) 100%
+        rgba(14, 31, 27, 0) 0%,
+        rgba(14, 31, 27, 0.55) 52%,
+        rgba(14, 31, 27, 0.92) 82%,
+        var(--ink) 100%
       );
+      pointer-events: none;
+    }
+
+    .hero__scrim {
+      display: none;
+    }
+
+    .hero__inner {
+      padding-top: 1.75rem;
+      padding-bottom: 3.25rem;
+    }
+
+    .hero__title {
+      max-width: 14ch;
     }
   }
 

@@ -49,6 +49,17 @@ const isCurrent = (href: string) => path === href;
     </nav>
 
     <div class="nav__actions">
+      {/* Small screens get the number itself rather than the desktop
+          two-line block — on a phone, calling is the likeliest action. */}
+      <a class="nav__call" href={SITE.phoneHref}>
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <path
+            d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.24 11.4 11.4 0 0 0 3.6.58 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1 11.4 11.4 0 0 0 .58 3.6 1 1 0 0 1-.25 1z"
+            fill="currentColor"></path>
+        </svg>
+        <span class="nav__call-label">{SITE.phoneLabel}</span>
+      </a>
+
       <a class="nav__phone" href={SITE.phoneHref}>
         <span class="nav__phone-label">{SITE.phoneLabel}</span>
         <span class="nav__phone-digits">{SITE.phoneDigits}</span>
@@ -255,6 +266,37 @@ const isCurrent = (href: string) => path === href;
     gap: clamp(0.75rem, 1.6vw, 1.6rem);
   }
 
+  /* ---- mobile call link ---- */
+  .nav__call {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45em;
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  .nav__call svg {
+    width: 0.95rem;
+    height: 0.95rem;
+    flex: none;
+  }
+
+  /* Below ~360px the label and the mark start to fight, so the icon carries
+     it alone — the link still dials the same number. */
+  @media (max-width: 22.5rem) {
+    .nav__call-label {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+    }
+  }
+
   .nav__phone {
     display: none;
     text-align: right;
@@ -389,6 +431,8 @@ const isCurrent = (href: string) => path === href;
     .nav__phone {
       display: block;
     }
+    /* the two-line phone block takes over from the compact call link */
+    .nav__call,
     .nav__burger,
     .nav__drawer {
       display: none;
