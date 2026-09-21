@@ -18,6 +18,13 @@ export const SITE = {
   facebook: 'https://www.facebook.com/vasectomyaustralia',
   /** Patient-facing network site — where non-GPs are sent to book. */
   vasectomyAustralia: 'https://vasectomyaustralia.com.au/',
+  /**
+   * AHPRA registration number. Its advertising guidelines expect a
+   * registered practitioner's number to appear wherever their regulated
+   * health services are advertised, so this sits in the site-wide footer
+   * and beside his credentials. Do not remove it.
+   */
+  ahpra: 'MED0000972761',
 } as const;
 
 /**

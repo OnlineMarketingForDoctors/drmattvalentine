@@ -143,7 +143,11 @@ const day = [
             no-scalpel technique. It has been the centre of his practice ever
             since.
           </p>
-          <a class="arrowlink" href="/about" data-reveal style="--delay:280ms">
+          <p class="about__reg" data-reveal style="--delay:260ms">
+            Dr Matt Valentine · FRACGP · AHPRA registration {SITE.ahpra}
+          </p>
+
+          <a class="arrowlink" href="/about" data-reveal style="--delay:320ms">
             Read the long version
             <span class="btn__arrow" aria-hidden="true">→</span>
           </a>
@@ -473,6 +477,14 @@ const day = [
     margin-bottom: 1.1rem;
     max-width: 46ch;
     color: var(--ink-soft);
+  }
+
+  .about__reg {
+    margin-top: 1.4rem;
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.05em;
+    color: color-mix(in srgb, var(--ink) 58%, transparent);
   }
 
   .arrowlink {

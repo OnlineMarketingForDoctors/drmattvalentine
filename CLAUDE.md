@@ -68,6 +68,24 @@ Claims on this site must be traceable to something the practice has supplied.
 Credentials in particular: the source material supports FRACGP and Designated
 Aviation Medical Examiner. Do not add letters beyond those without asking.
 
+### AHPRA registration number
+
+`SITE.ahpra` is **MED0000972761**. AHPRA's advertising guidelines expect a
+registered practitioner's number to appear wherever their regulated health
+services are advertised, so it is not optional decoration. It currently
+appears in three places:
+
+| Where | Selector | Covers |
+| --- | --- | --- |
+| Site-wide footer | `.foot__ahpra` | every page, including `/vasectomy`, `/contact`, `/refer` |
+| Home bio block | `.about__reg` | the section that describes him on the landing page |
+| About portrait caption | `.open__ahpra` | beside his credentials |
+
+Do not remove any of the three, and add it to any new page or section that
+describes him or his services. Keep it at normal body contrast — it is
+regulatory text, not fine print, and must pass WCAG AA (all three currently
+measure 7.7:1 or better).
+
 ## Images
 
 `src/assets/photos/` holds real photographs of Dr Valentine, supplied by the
