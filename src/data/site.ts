@@ -45,3 +45,53 @@ export const STATS = {
   /** Year he started performing vasectomies, under Dr Greg Silver. */
   startYear: 2008,
 } as const;
+
+/** Shared chrome: header, footer and the refer band. */
+export const CHROME = {
+  header: {
+    brandName: 'Matt Valentine',
+    brandTagline: 'No-scalpel vasectomy',
+    links: [
+      { label: 'About', href: '/about/' },
+      { label: 'The procedure', href: '/vasectomy/' },
+      { label: 'Clinics', href: '/vasectomy/#clinics' },
+      { label: 'Contact', href: '/contact/' },
+    ],
+    cta: 'Refer a patient',
+  },
+  footer: {
+    tagline: 'Specialist GP · No-scalpel vasectomy',
+    links: [
+      { label: 'About', href: '/about/' },
+      { label: 'The procedure', href: '/vasectomy/' },
+      { label: 'Clinic locations', href: '/vasectomy/#clinics' },
+      { label: 'Contact', href: '/contact/' },
+    ],
+    phoneTag: 'Rooms',
+    copyrightHolder: 'Vasectomy Australia',
+  },
+  referBand: {
+    eyebrow: 'Refer a patient',
+    heading: 'Send him our way.',
+    lede:
+      'Are you a GP with a patient who has finished having children? ' +
+      'Dr Valentine has performed {career} vasectomies and holds room ' +
+      'for urgent referrals within {urgentWeeks} weeks.',
+    cta: 'Send a referral',
+    noteBefore: 'Not a GP? Patients book directly through',
+    noteLink: 'Vasectomy Australia',
+    noteAfter: 'rather than through these rooms.',
+    orchidometer: {
+      eyebrow: 'For referrers',
+      heading: 'Order an orchidometer.',
+      body:
+        'A Prader orchidometer, free to referring practices, along with some ' +
+        'other Vasectomy Australia oddments. Useful in the room, and a fair ' +
+        'bit more use than a pen.',
+      linkLabel: 'Request one',
+      emailSubject: 'Orchidometer request',
+      imageAlt:
+        'A Prader orchidometer — a graduated chain of ellipsoid beads used to measure testicular volume',
+    },
+  },
+};

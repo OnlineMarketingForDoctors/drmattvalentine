@@ -6,7 +6,7 @@ import Footer from "../components/Footer.astro";
 import { webPage } from "../lib/schema";
 import PageHero from "../components/PageHero.astro";
 import ReferBand from "../components/ReferBand.astro";
-import { getCareer, getLocations, getSettings, getStats } from "../sanity/loaders";
+import { getCareer, getLocations, getPage, getSettings, getStats } from "../sanity/loaders";
 
 const [SITE, STATS, { valentineCount }] = await Promise.all([getSettings(), getStats(), getLocations()]);
 
@@ -16,26 +16,27 @@ import consult from "../assets/photos/valentine-consult.jpg";
 
 /* A real chronology, so the years carry information rather than decoration. */
 const career = await getCareer();
-const title = `About Dr Matt Valentine — vasectomist, Brisbane`;
-const description = `Dr Matt Valentine trained in Adelaide, spent five years as an RAAF Aviation Medical Officer, and has performed over 25,000 no-scalpel vasectomies. Background, training and qualifications.`;
+const page = await getPage("/about/");
+const title = page.metaTitle;
+const description = page.metaDescription;
 ---
 
 <Base
   title={title}
   description={description}
-  schema={await webPage({ name: "About Dr Matt Valentine", description, path: "/about/" }, Astro.site)}
+  schema={await webPage({ name: page.title, description, path: "/about/" }, Astro.site)}
 >
   <Nav />
 
   <main id="main">
     <PageHero
-      eyebrow="About"
-      title="He has always practised where the patient is."
-      lede={`Adelaide, then the Air Force, then Brisbane — and now a run of ${valentineCount} clinics across three states.`}
+      eyebrow={page.hero.eyebrow}
+      title={page.hero.heading}
+      lede={page.hero.lede}
       image={corridor}
-      imageAlt="Dr Matt Valentine in navy scrubs in the corridor of a regional medical centre"
+      imageAlt={page.hero.imageAlt}
       focus="center"
-      crumb="About"
+      crumb={page.hero.crumb}
     />
 
     <!-- ============================================ OPENING -->

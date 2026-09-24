@@ -3,12 +3,7 @@ import { getSettings } from "../sanity/loaders";
 
 const SITE = await getSettings();
 
-const links = [
-  { href: "/about/", label: "About" },
-  { href: "/vasectomy/", label: "The procedure" },
-  { href: "/vasectomy/#clinics", label: "Clinics" },
-  { href: "/contact/", label: "Contact" },
-];
+const { links } = SITE.header;
 
 interface Props {
   /** Set on pages whose hero is a pale background rather than a dark image,
@@ -32,13 +27,13 @@ const isCurrent = (href: string) => !href.includes("#") && strip(href) === path;
 <header class:list={["nav", light && "nav--light"]} data-nav>
   <div class="nav__inner">
     <a class="nav__mark" href="/">
-      <span class="nav__mark-name">Matt Valentine</span>
+      <span class="nav__mark-name">{SITE.header.brandName}</span>
       {/* Split into glyphs so flex can track the tagline out to exactly the
           width of the name above it, whatever the font metrics turn out to
           be. The label carries the real text for assistive tech. */}
-      <span class="nav__mark-role" aria-label="No-scalpel vasectomy">
+      <span class="nav__mark-role" aria-label={SITE.header.brandTagline}>
         {
-          [..."NO-SCALPEL VASECTOMY"].map((ch) => (
+          [...SITE.header.brandTagline.toUpperCase()].map((ch) => (
             <span aria-hidden="true" class={ch === " " ? "is-space" : undefined}>
               {ch === " " ? " " : ch}
             </span>
@@ -73,7 +68,7 @@ const isCurrent = (href: string) => !href.includes("#") && strip(href) === path;
         <span class="nav__phone-label">{SITE.phoneLabel}</span>
         <span class="nav__phone-digits">{SITE.phoneDigits}</span>
       </a>
-      <a class="btn nav__cta" href="/refer/">Refer a patient</a>
+      <a class="btn nav__cta" href="/refer/">{SITE.header.cta}</a>
       <button
         class="nav__burger"
         type="button"

@@ -9,12 +9,14 @@ export const TOKENS = {
   minutes: 'Stats → minutes on the table',
   urgentWeeks: 'Stats → urgent referral wait, in weeks',
   cost: 'Stats → out-of-pocket cost',
-  career: 'Stats → career total',
+  career: 'Stats → career total, e.g. 25,000+',
+  careerNumber: 'Stats → career total without the +, e.g. 25,000',
   annual: 'Stats → annual total',
   nsvYear: 'Stats → year of no-scalpel training',
   startYear: 'Stats → year he started vasectomies',
   clinicCount: "Count of Dr Valentine's clinics",
   stateCount: 'Count of states Dr Valentine covers',
+  phoneLabel: 'Site settings → phone as written, e.g. 1800 SNIPME',
 } as const
 
 export const tokenHelp =

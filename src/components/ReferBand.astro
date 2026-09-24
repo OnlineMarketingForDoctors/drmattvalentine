@@ -1,6 +1,6 @@
 ---
 import { Image } from "astro:assets";
-import { getSettings, getStats } from "../sanity/loaders";
+import { getSettings } from "../sanity/loaders";
 import orchidImg from "../assets/generated/orchidometer.png";
 
 interface Props {
@@ -8,23 +8,23 @@ interface Props {
   id?: string;
 }
 const { id = "refer" } = Astro.props;
-const [SITE, STATS] = await Promise.all([getSettings(), getStats()]);
+const SITE = await getSettings();
+const band = SITE.referBand;
+const orchid = band.orchidometer;
 ---
 
 <section class="band band--dark refer" id={id}>
   <div class="wrap refer__inner">
     <div class="refer__main">
-      <p class="tag tag--pale" data-reveal>Refer a patient</p>
-      <h2 data-reveal style="--delay:80ms">Send him our way.</h2>
+      <p class="tag tag--pale" data-reveal>{band.eyebrow}</p>
+      <h2 data-reveal style="--delay:80ms">{band.heading}</h2>
       <p class="lede" data-reveal style="--delay:160ms">
-        Are you a GP with a patient who has finished having children?
-        Dr Valentine has performed {STATS.career} vasectomies and holds room
-        for urgent referrals within {STATS.urgentWeeks} weeks.
+        {band.lede}
       </p>
 
       <div class="refer__actions" data-reveal style="--delay:240ms">
         <a class="btn" href="/refer/">
-          Send a referral
+          {band.cta}
           <span class="btn__arrow" aria-hidden="true">→</span>
         </a>
         <a class="btn btn--ghost btn--on-dark" href={SITE.phoneHref}>
@@ -33,11 +33,11 @@ const [SITE, STATS] = await Promise.all([getSettings(), getStats()]);
       </div>
 
       <p class="refer__note" data-reveal style="--delay:320ms">
-        Not a GP? Patients book directly through <a
+        {band.noteBefore} <a
           href={SITE.vasectomyAustralia}
           rel="nofollow noopener"
-          target="_blank">Vasectomy Australia</a
-        > rather than through these rooms.
+          target="_blank">{band.noteLink}</a
+        > {band.noteAfter}
       </p>
     </div>
 
@@ -48,22 +48,20 @@ const [SITE, STATS] = await Promise.all([getSettings(), getStats()]);
       <div class="refer__swag-media">
         <Image
           src={orchidImg}
-          alt="A Prader orchidometer — a graduated chain of ellipsoid beads used to measure testicular volume"
+          alt={orchid.imageAlt}
           widths={[400, 700, 1000]}
           sizes="(min-width: 60rem) 24rem, 90vw"
           quality={80}
         />
       </div>
       <div class="refer__swag-body">
-        <p class="tag tag--pale">For referrers</p>
-        <h3>Order an orchidometer.</h3>
+        <p class="tag tag--pale">{orchid.eyebrow}</p>
+        <h3>{orchid.heading}</h3>
         <p>
-          A Prader orchidometer, free to referring practices, along with some
-          other Vasectomy Australia oddments. Useful in the room, and a fair
-          bit more use than a pen.
+          {orchid.body}
         </p>
-        <a class="refer__swag-link" href={`mailto:${SITE.email}?subject=${encodeURIComponent("Orchidometer request")}`}>
-          Request one
+        <a class="refer__swag-link" href={`mailto:${SITE.email}?subject=${encodeURIComponent(orchid.emailSubject)}`}>
+          {orchid.linkLabel}
           <span class="btn__arrow" aria-hidden="true">→</span>
         </a>
       </div>

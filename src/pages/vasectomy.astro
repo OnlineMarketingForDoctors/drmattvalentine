@@ -7,7 +7,7 @@ import { webPage, medicalProcedure } from "../lib/schema";
 import PageHero from "../components/PageHero.astro";
 import LocationFinder from "../components/LocationFinder.astro";
 import ReferBand from "../components/ReferBand.astro";
-import { getAdvantages, getLocations, getSettings, getStats } from "../sanity/loaders";
+import { getAdvantages, getLocations, getPage, getSettings, getStats } from "../sanity/loaders";
 
 const [SITE, STATS, { valentineCount }] = await Promise.all([getSettings(), getStats(), getLocations()]);
 
@@ -18,26 +18,27 @@ import leaving from "../assets/generated/leaving.webp";
 /* Straight from the current site's list of advantages, expanded only where a
    referring GP would otherwise have to ring and ask. */
 const advantages = await getAdvantages();
-const title = `No-scalpel vasectomy — technique, recovery, cost and clinic locations`;
-const description = `No-scalpel vasectomy with Dr Matt Valentine: the technique, the appointment, recovery, clearance testing, cost, and every clinic across Queensland, Victoria and Western Australia.`;
+const page = await getPage("/vasectomy/");
+const title = page.metaTitle;
+const description = page.metaDescription;
 ---
 
 <Base
   title={title}
   description={description}
-  schema={[await webPage({ name: "The procedure", description, path: "/vasectomy/" }, Astro.site), await medicalProcedure(Astro.site)]}
+  schema={[await webPage({ name: page.title, description, path: "/vasectomy/" }, Astro.site), await medicalProcedure(Astro.site)]}
 >
   <Nav />
 
   <main id="main">
     <PageHero
-      eyebrow="The procedure"
-      title="No scalpel, one opening, no stitches."
-      lede={`Under local anaesthetic, in under ${STATS.minutes} minutes, at whichever of the ${valentineCount} clinics is nearest your patient.`}
+      eyebrow={page.hero.eyebrow}
+      title={page.hero.heading}
+      lede={page.hero.lede}
       image={procedureRoom}
-      imageAlt="An empty, prepared day-procedure room with a surgical green drape and instrument trolley"
+      imageAlt={page.hero.imageAlt}
       focus="center"
-      crumb="Vasectomy"
+      crumb={page.hero.crumb}
     />
 
     <!-- ============================================ TECHNIQUE -->

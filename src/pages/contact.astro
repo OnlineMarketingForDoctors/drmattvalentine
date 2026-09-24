@@ -5,31 +5,32 @@ import Footer from "../components/Footer.astro";
 import { webPage } from "../lib/schema";
 import PageHero from "../components/PageHero.astro";
 import ReferBand from "../components/ReferBand.astro";
-import { getLocations, getSettings } from "../sanity/loaders";
+import { getLocations, getPage, getSettings } from "../sanity/loaders";
 
 const [SITE, { valentineCount }] = await Promise.all([getSettings(), getLocations()]);
 
 import desk from "../assets/generated/desk.webp";
-const title = `Contact Dr Matt Valentine — questions about a patient`;
-const description = `Contact Dr Matt Valentine's rooms about a patient referral for no-scalpel vasectomy. Phone 1800 SNIPME, email, or send a question directly.`;
+const page = await getPage("/contact/");
+const title = page.metaTitle;
+const description = page.metaDescription;
 ---
 
 <Base
   title={title}
   description={description}
-  schema={await webPage({ name: "Contact", description, path: "/contact/" }, Astro.site)}
+  schema={await webPage({ name: page.title, description, path: "/contact/" }, Astro.site)}
 >
   <Nav />
 
   <main id="main">
     <PageHero
-      eyebrow="Contact"
-      title="Ask about a patient."
-      lede="An open invitation to referring doctors: if there is a question worth asking before the referral, ask it."
+      eyebrow={page.hero.eyebrow}
+      title={page.hero.heading}
+      lede={page.hero.lede}
       image={desk}
-      imageAlt="Dr Matt Valentine reading a referral letter at his desk"
+      imageAlt={page.hero.imageAlt}
       focus="center"
-      crumb="Contact"
+      crumb={page.hero.crumb}
     />
 
     <!-- ============================================ FORM -->

@@ -3,33 +3,34 @@ import Base from "../layouts/Base.astro";
 import Nav from "../components/Nav.astro";
 import Footer from "../components/Footer.astro";
 import PageHero from "../components/PageHero.astro";
-import { getLocations, getSettings, getStats } from "../sanity/loaders";
+import { getLocations, getPage, getSettings, getStats } from "../sanity/loaders";
 
 const [SITE, STATS, { valentineCount }] = await Promise.all([getSettings(), getStats(), getLocations()]);
 import { webPage } from "../lib/schema";
 
 import instruments from "../assets/generated/instruments.webp";
 
-const title = "Refer a patient — Dr Matt Valentine";
-const description = `Refer a patient to Dr Matt Valentine for no-scalpel vasectomy. Send the patient's details and your practice details, across ${valentineCount} clinics in Queensland, Victoria and Western Australia.`;
+const page = await getPage("/refer/");
+const title = page.metaTitle;
+const description = page.metaDescription;
 ---
 
 <Base
   title={title}
   description={description}
-  schema={await webPage({ name: "Refer a patient", description, path: "/refer/" }, Astro.site)}
+  schema={await webPage({ name: page.title, description, path: "/refer/" }, Astro.site)}
 >
   <Nav />
 
   <main id="main">
     <PageHero
-      eyebrow="Refer a patient"
-      title="Send him our way."
-      lede="Patient details, your details, and he takes it from there."
+      eyebrow={page.hero.eyebrow}
+      title={page.hero.heading}
+      lede={page.hero.lede}
       image={instruments}
-      imageAlt="A no-scalpel vasectomy instrument set laid out on a surgical green drape"
+      imageAlt={page.hero.imageAlt}
       focus="center"
-      crumb="Refer a patient"
+      crumb={page.hero.crumb}
     />
 
     <section class="band refer" id="refer">

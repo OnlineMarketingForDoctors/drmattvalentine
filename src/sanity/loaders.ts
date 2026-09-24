@@ -11,6 +11,9 @@
  * runs once per build however many pages ask for it.
  */
 import { sanityClient } from "sanity:client";
+// The fixed set of routes and the hero fields each renders. Shared with the
+// Studio so the two cannot disagree about which fields a page requires.
+import { ROUTES, isThankYou } from "../../studio-drmattvalentine/schemaTypes/lib/routes";
 import {
   advantagesQuery,
   appointmentStepsQuery,
@@ -22,6 +25,11 @@ import {
   statsQuery,
 } from "./queries";
 
+export interface Link {
+  label: string;
+  href: string;
+}
+
 export interface Settings {
   name: string;
   phoneLabel: string;
@@ -31,6 +39,25 @@ export interface Settings {
   facebook: string;
   vasectomyAustralia: string;
   ahpra: string;
+  header: { brandName: string; brandTagline: string; cta: string; links: Link[] };
+  footer: { tagline: string; phoneTag: string; copyrightHolder: string; links: Link[] };
+  referBand: {
+    eyebrow: string;
+    heading: string;
+    lede: string;
+    cta: string;
+    noteBefore: string;
+    noteLink: string;
+    noteAfter: string;
+    orchidometer: {
+      eyebrow: string;
+      heading: string;
+      body: string;
+      linkLabel: string;
+      emailSubject: string;
+      imageAlt: string;
+    };
+  };
 }
 
 export interface Stats {
@@ -69,6 +96,26 @@ export interface SitePage {
   blurb: string;
 }
 
+export interface Hero {
+  eyebrow: string;
+  heading: string;
+  lede: string;
+  imageAlt: string;
+  crumb: string;
+  primaryCta: string;
+  secondaryCta: string;
+}
+
+export interface Page {
+  path: string;
+  /** Short name: /sitemap/, llms.txt and structured data. */
+  title: string;
+  metaTitle: string;
+  metaDescription: string;
+  /** Only the fields this route renders are guaranteed non-empty. */
+  hero: Hero;
+}
+
 const cache = new Map<string, Promise<unknown>>();
 
 async function fetchOnce<T>(label: string, query: string): Promise<T> {
@@ -97,13 +144,29 @@ function nonEmpty<T extends object>(label: string, list: T[] | null, fields: (ke
   return list;
 }
 
-export async function getSettings(): Promise<Settings> {
+/** Settings as stored, checked but with {tokens} still in place. */
+async function getRawSettings(): Promise<Settings> {
   const s = required(
     "Site settings",
     await fetchOnce<Omit<Settings, "phoneHref">>("settings", settingsQuery),
-    ["name", "phoneLabel", "phoneDigits", "email", "facebook", "vasectomyAustralia", "ahpra"],
+    ["name", "phoneLabel", "phoneDigits", "email", "facebook", "vasectomyAustralia", "ahpra", "header", "footer", "referBand"],
   );
+  required("Site settings → Header", s.header, ["brandName", "brandTagline", "cta", "links"]);
+  required("Site settings → Footer", s.footer, ["tagline", "phoneTag", "copyrightHolder", "links"]);
+  nonEmpty("Site settings → Header links", s.header.links, ["label", "href"]);
+  nonEmpty("Site settings → Footer links", s.footer.links, ["label", "href"]);
+  required("Site settings → Refer band", s.referBand, [
+    "eyebrow", "heading", "lede", "cta", "noteBefore", "noteLink", "noteAfter", "orchidometer",
+  ]);
+  required("Site settings → Refer band → Orchidometer", s.referBand.orchidometer, [
+    "eyebrow", "heading", "body", "linkLabel", "emailSubject", "imageAlt",
+  ]);
   return { ...s, phoneHref: `tel:${s.phoneDigits.replace(/\s/g, "")}` };
+}
+
+export async function getSettings(): Promise<Settings> {
+  const [s, fill] = await Promise.all([getRawSettings(), tokenFiller()]);
+  return { ...s, referBand: { ...s.referBand, lede: fill(s.referBand.lede) } };
 }
 
 export async function getStats(): Promise<Stats> {
@@ -146,8 +209,45 @@ export async function getStates(doctor: "valentine" | "cashion" = "valentine"): 
   return doctor === "valentine" ? l.valentineStates : l.cashionStates;
 }
 
+async function getAllPages(): Promise<(Page & { _id: string; blurb?: string })[]> {
+  return nonEmpty("pages", await fetchOnce<(Page & { _id: string; blurb?: string })[]>("pages", pagesQuery), [
+    "path", "title", "metaTitle", "metaDescription", "hero",
+  ]);
+}
+
+/** The pages listed on /sitemap/ and in llms.txt, in curated order. Never the thank-you pages. */
 export async function getPages(): Promise<SitePage[]> {
-  return nonEmpty("sitemap entries", await fetchOnce<SitePage[]>("pages", pagesQuery), ["path", "title", "blurb"]);
+  const listed = (await getAllPages()).filter((p) => !isThankYou(p.path));
+  return nonEmpty("sitemap entries", listed, ["path", "title", "blurb"]).map(({ path, title, blurb }) => ({
+    path,
+    title,
+    blurb: blurb as string,
+  }));
+}
+
+/**
+ * Meta and hero text for one route, with {tokens} filled. Throws if the page
+ * is missing, is not in the fixed set, or leaves empty a hero field that
+ * this route renders.
+ */
+export async function getPage(path: string): Promise<Page> {
+  const route = ROUTES.find((r) => r.path === path);
+  if (!route) throw new Error(`Sanity: ${path} is not in the fixed set of routes (studio-drmattvalentine/schemaTypes/lib/routes.ts)`);
+  const [pages, fill] = await Promise.all([getAllPages(), tokenFiller()]);
+  const page = pages.find((p) => p._id === route.id);
+  if (!page) throw new Error(`Sanity: page ${route.id} (${path}) is missing — publish it in Studio`);
+  if (page.path !== path) throw new Error(`Sanity: page ${route.id} has path ${page.path}, expected ${path}`);
+  required(`Page ${path} → Hero`, page.hero, route.hero);
+  const hero = Object.fromEntries(
+    Object.entries(page.hero).map(([k, v]) => [k, typeof v === "string" ? fill(v) : v]),
+  ) as unknown as Hero;
+  return {
+    path,
+    title: page.title,
+    metaTitle: fill(page.metaTitle),
+    metaDescription: fill(page.metaDescription),
+    hero,
+  };
 }
 
 /**
@@ -155,9 +255,11 @@ export async function getPages(): Promise<SitePage[]> {
  * Stats or the clinic list. Unknown tokens throw rather than print braces.
  */
 async function tokenFiller(): Promise<(text: string) => string> {
-  const [stats, locations] = await Promise.all([getStats(), getLocations()]);
+  const [stats, locations, settings] = await Promise.all([getStats(), getLocations(), getRawSettings()]);
   const values: Record<string, string | number> = {
     ...stats,
+    careerNumber: stats.career.replace("+", ""),
+    phoneLabel: settings.phoneLabel,
     clinicCount: locations.valentineCount,
     stateCount: locations.valentineStates.length,
   };

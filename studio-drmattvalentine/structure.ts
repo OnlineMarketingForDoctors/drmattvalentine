@@ -1,8 +1,9 @@
 import type {StructureResolver} from 'sanity/structure'
+import {ROUTES} from './schemaTypes/lib/routes'
 
 /*
- * Settings and stats are single documents with fixed IDs, so there is exactly
- * one of each for the site to read. Clinics are shown per doctor because a
+ * Settings, stats and pages are fixed documents with fixed IDs, so there is
+ * exactly one of each for the site to read. Clinics are shown per doctor because a
  * referring GP's first question is whether their patient sees Dr Valentine.
  */
 const singleton = (S: Parameters<StructureResolver>[0], type: string, title: string) =>
@@ -58,5 +59,19 @@ export const structure: StructureResolver = (S) =>
       ordered(S, 'appointmentStep', 'Appointment steps'),
       ordered(S, 'advantage', 'Procedure advantages'),
       S.divider(),
-      ordered(S, 'sitePage', 'Sitemap entries'),
+      S.listItem()
+        .title('Pages')
+        .id('pages')
+        .child(
+          S.list()
+            .title('Pages')
+            .items(
+              ROUTES.map((r) =>
+                S.documentListItem()
+                  .schemaType('page')
+                  .id(r.id)
+                  .child(S.document().schemaType('page').documentId(r.id)),
+              ),
+            ),
+        ),
     ])

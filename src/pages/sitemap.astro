@@ -3,29 +3,29 @@ import Base from "../layouts/Base.astro";
 import Nav from "../components/Nav.astro";
 import Footer from "../components/Footer.astro";
 import { webPage } from "../lib/schema";
-import { getPages } from "../sanity/loaders";
+import { getPage, getPages } from "../sanity/loaders";
 
 const pages = await getPages();
 
-const title = "Sitemap — Dr Matt Valentine";
-const description = "Every page on drmattvalentine.com.au.";
+const page = await getPage("/sitemap/");
+const title = page.metaTitle;
+const description = page.metaDescription;
 ---
 
 <Base
   title={title}
   description={description}
-  schema={await webPage({ name: "Sitemap", description, path: "/sitemap/" }, Astro.site)}
+  schema={await webPage({ name: page.title, description, path: "/sitemap/" }, Astro.site)}
 >
   <Nav light />
 
   <main id="main">
     <section class="band smap">
       <div class="wrap">
-        <p class="tag">Sitemap</p>
-        <h1>Every page, in one list.</h1>
+        <p class="tag">{page.hero.eyebrow}</p>
+        <h1>{page.hero.heading}</h1>
         <p class="lede measure">
-          Six pages. If you are looking for a clinic, the full list sits on the
-          procedure page and filters by state.
+          {page.hero.lede}
         </p>
 
         <ol class="smap__list">

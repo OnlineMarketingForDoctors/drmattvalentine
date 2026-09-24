@@ -5,7 +5,7 @@ import Nav from "../components/Nav.astro";
 import Footer from "../components/Footer.astro";
 import { webPage } from "../lib/schema";
 import ReferBand from "../components/ReferBand.astro";
-import { getDay, getLocations, getPillars, getSettings, getStats } from "../sanity/loaders";
+import { getDay, getLocations, getPage, getPillars, getSettings, getStats } from "../sanity/loaders";
 
 import heroImg from "../assets/generated/hero.webp";
 import portrait from "../assets/photos/valentine-polo.jpg";
@@ -25,14 +25,15 @@ const pillars = await getPillars();
 /* The patient's day, in order. Order is the information here — this is a real
    sequence with a real clock attached, which is why it carries numbers. */
 const day = await getDay();
-const title = `Dr Matt Valentine — No-scalpel vasectomy across QLD, VIC and WA`;
-const description = `Dr Matt Valentine has performed over ${STATS.career.replace("+", "")} vasectomies and operates ${valentineCount} clinics across Queensland, Victoria and Western Australia. Referral information for Australian GPs.`;
+const page = await getPage("/");
+const title = page.metaTitle;
+const description = page.metaDescription;
 ---
 
 <Base
   title={title}
   description={description}
-  schema={await webPage({ name: "Home", description, path: "/" }, Astro.site)}
+  schema={await webPage({ name: page.title, description, path: "/" }, Astro.site)}
 >
   <Nav />
 
@@ -42,7 +43,7 @@ const description = `Dr Matt Valentine has performed over ${STATS.career.replace
       <div class="hero__media">
         <Image
           src={heroImg}
-          alt="Dr Matt Valentine, standing, in navy surgical scrubs"
+          alt={page.hero.imageAlt}
           widths={[900, 1400, 2000, 2600]}
           sizes="100vw"
           loading="eager"
@@ -53,20 +54,18 @@ const description = `Dr Matt Valentine has performed over ${STATS.career.replace
       <div class="hero__scrim"></div>
 
       <div class="wrap hero__inner">
-        <p class="tag tag--pale hero__eyebrow">Vasectomy Australia · QLD · VIC · WA</p>
-        <h1 class="hero__title">One procedure, done properly.</h1>
+        <p class="tag tag--pale hero__eyebrow">{page.hero.eyebrow}</p>
+        <h1 class="hero__title">{page.hero.heading}</h1>
         <p class="lede hero__lede">
-          Dr Matt Valentine has performed {STATS.career} no-scalpel vasectomies
-          and does around {STATS.annual} a year, across {valentineCount} clinics
-          in Queensland, Victoria and Western Australia.
+          {page.hero.lede}
         </p>
         <div class="hero__actions">
           <a class="btn" href="/refer/">
-            Refer a patient
+            {page.hero.primaryCta}
             <span class="btn__arrow" aria-hidden="true">→</span>
           </a>
           <a class="btn btn--ghost btn--on-dark" href="/vasectomy/#clinics">
-            Find the nearest clinic
+            {page.hero.secondaryCta}
           </a>
         </div>
       </div>

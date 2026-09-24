@@ -2,9 +2,9 @@
 import Base from "../layouts/Base.astro";
 import Nav from "../components/Nav.astro";
 import Footer from "../components/Footer.astro";
-import { getSettings } from "../sanity/loaders";
+import { getPage, getSettings } from "../sanity/loaders";
 
-const SITE = await getSettings();
+const [SITE, page] = await Promise.all([getSettings(), getPage("/thank-you-contact/")]);
 ---
 
 {/*
@@ -14,8 +14,8 @@ const SITE = await getSettings();
   index after launch, and is deliberately absent from /sitemap/ and llms.txt.
 */}
 <Base
-  title="Thank you — question received — Dr Matt Valentine"
-  description="Confirmation page."
+  title={page.metaTitle}
+  description={page.metaDescription}
   noindex
 >
   <Nav light />
@@ -23,16 +23,16 @@ const SITE = await getSettings();
   <main id="main">
     <section class="band ty">
       <div class="wrap ty__inner">
-        <p class="tag">Question received</p>
-        <h1>Your question is with Dr Valentine's rooms.</h1>
-        <p class="lede">He answers these himself, so a reply may take a day or two if he is on the road. If it is time-critical, phone the rooms and ask for him directly.</p>
+        <p class="tag">{page.hero.eyebrow}</p>
+        <h1>{page.hero.heading}</h1>
+        <p class="lede">{page.hero.lede}</p>
 
         <div class="ty__actions">
           <a class="btn" href="/">
-            Back to the home page
+            {page.hero.primaryCta}
             <span class="btn__arrow" aria-hidden="true">&#8594;</span>
           </a>
-          <a class="btn btn--ghost" href="/contact/">Back to contact</a>
+          <a class="btn btn--ghost" href="/contact/">{page.hero.secondaryCta}</a>
         </div>
 
         <p class="ty__phone">

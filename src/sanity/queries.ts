@@ -8,7 +8,13 @@
 import groq from "groq";
 
 export const settingsQuery = groq`*[_id == "siteSettings"][0]{
-  name, ahpra, phoneLabel, phoneDigits, email, facebook, vasectomyAustralia
+  name, ahpra, phoneLabel, phoneDigits, email, facebook, vasectomyAustralia,
+  header{ brandName, brandTagline, cta, links[]{ label, href } },
+  footer{ tagline, phoneTag, copyrightHolder, links[]{ label, href } },
+  referBand{
+    eyebrow, heading, lede, cta, noteBefore, noteLink, noteAfter,
+    orchidometer{ eyebrow, heading, body, linkLabel, emailSubject, imageAlt }
+  }
 }`;
 
 export const statsQuery = groq`*[_id == "stats"][0]{
@@ -20,7 +26,11 @@ export const regionsQuery = groq`*[_type == "clinicRegion"] | order(order asc){
   "clinics": *[_type == "clinic" && references(^._id)] | order(order asc){ area, clinic, base }
 }`;
 
-export const pagesQuery = groq`*[_type == "sitePage"] | order(order asc){ path, title, blurb }`;
+/** Every route's page. The loader picks one, or the sitemap entries. */
+export const pagesQuery = groq`*[_type == "page"] | order(order asc){
+  _id, path, title, blurb, metaTitle, metaDescription,
+  hero{ eyebrow, heading, lede, imageAlt, crumb, primaryCta, secondaryCta }
+}`;
 
 export const careerQuery = groq`*[_type == "careerMilestone"] | order(order asc){ year, title, body }`;
 
