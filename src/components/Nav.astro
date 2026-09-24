@@ -2,10 +2,10 @@
 import { SITE } from "../site.config";
 
 const links = [
-  { href: "/about", label: "About" },
-  { href: "/vasectomy", label: "The procedure" },
-  { href: "/vasectomy#clinics", label: "Clinics" },
-  { href: "/contact", label: "Contact" },
+  { href: "/about/", label: "About" },
+  { href: "/vasectomy/", label: "The procedure" },
+  { href: "/vasectomy/#clinics", label: "Clinics" },
+  { href: "/contact/", label: "Contact" },
 ];
 
 interface Props {
@@ -15,9 +15,16 @@ interface Props {
 }
 const { light = false } = Astro.props;
 
-// mark the current section, tolerating a trailing slash
-const path = Astro.url.pathname.replace(/\/$/, "") || "/";
-const isCurrent = (href: string) => path === href;
+/*
+ * Mark the current section. Links now carry trailing slashes, so both sides
+ * are normalised before comparing — otherwise "/about" never equals
+ * "/about/" and nothing is ever current. A link to an anchor within a page
+ * is never "current" on its own: it would give the nav two aria-current
+ * items on /vasectomy/, where "The procedure" is the real answer.
+ */
+const strip = (p: string) => p.replace(/\/$/, "") || "/";
+const path = strip(Astro.url.pathname);
+const isCurrent = (href: string) => !href.includes("#") && strip(href) === path;
 ---
 
 <header class:list={["nav", light && "nav--light"]} data-nav>
@@ -64,7 +71,7 @@ const isCurrent = (href: string) => path === href;
         <span class="nav__phone-label">{SITE.phoneLabel}</span>
         <span class="nav__phone-digits">{SITE.phoneDigits}</span>
       </a>
-      <a class="btn nav__cta" href="/refer">Refer a patient</a>
+      <a class="btn nav__cta" href="/refer/">Refer a patient</a>
       <button
         class="nav__burger"
         type="button"

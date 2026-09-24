@@ -14,6 +14,19 @@ interface Props {
 }
 
 const { eyebrow, title, lede, image, imageAlt, focus = "center", crumb } = Astro.props;
+
+/* BreadcrumbList built from the same two values the visible trail renders,
+   so the markup cannot drift from what a reader actually sees. */
+const home = new URL("/", Astro.site).href;
+const here = new URL(Astro.url.pathname, Astro.site).href;
+const breadcrumbs = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "Home", item: home },
+    { "@type": "ListItem", position: 2, name: crumb, item: here },
+  ],
+};
 ---
 
 <section class="phero" id="top">
@@ -39,6 +52,7 @@ const { eyebrow, title, lede, image, imageAlt, focus = "center", crumb } = Astro
     {/* Sits bottom-right of the banner: it is wayfinding, not the headline,
         so it stays out of the reading order of the title block. */}
     <nav class="phero__crumb" aria-label="Breadcrumb">
+      <script type="application/ld+json" set:html={JSON.stringify(breadcrumbs)} />
       <a href="/">Home</a>
       <span aria-hidden="true">/</span>
       <span aria-current="page">{crumb}</span>

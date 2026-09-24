@@ -57,8 +57,14 @@ if (check) {
 }
 
 // write mode
+// Only the site-wide rule is ours to manage. Other X-Robots-Tag rules —
+// notably the permanent one on /thank-you-* — must survive the flip.
 vercel.headers = (vercel.headers ?? []).filter(
-  (rule) => !(rule.headers ?? []).some((h) => h.key?.toLowerCase() === HEADER)
+  (rule) =>
+    !(
+      rule.source === ROUTE &&
+      (rule.headers ?? []).some((h) => h.key?.toLowerCase() === HEADER)
+    )
 );
 if (noindex) {
   vercel.headers.unshift({

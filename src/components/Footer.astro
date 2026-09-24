@@ -15,10 +15,10 @@ const year = new Date().getFullYear();
     </div>
 
     <nav class="foot__nav" aria-label="Footer">
-      <a href="/about">About</a>
-      <a href="/vasectomy">The procedure</a>
-      <a href="/vasectomy#clinics">Clinic locations</a>
-      <a href="/contact">Contact</a>
+      <a href="/about/">About</a>
+      <a href="/vasectomy/">The procedure</a>
+      <a href="/vasectomy/#clinics">Clinic locations</a>
+      <a href="/contact/">Contact</a>
     </nav>
 
     <a class="foot__phone" href={SITE.phoneHref}>
@@ -29,12 +29,15 @@ const year = new Date().getFullYear();
   </div>
 
   <div class="wrap foot__base">
-    <p>© {year} Vasectomy Australia. All rights reserved.</p>
+    <p>
+      © {year} Vasectomy Australia. All rights reserved. ·
+      <a class="foot__sitemap" href="/sitemap/">Sitemap</a>
+    </p>
     <p>
       Powered by <a
         class="foot__omd"
         href="https://onlinemarketingfordoctors.com/"
-        rel="noopener"
+        rel="nofollow noopener"
         target="_blank">Online Marketing For Doctors</a
       >
     </p>
@@ -124,6 +127,19 @@ const year = new Date().getFullYear();
 
   .foot__base p {
     margin: 0;
+  }
+
+  .foot__sitemap {
+    color: inherit;
+    text-decoration: underline;
+    text-underline-offset: 0.3em;
+    text-decoration-color: color-mix(in srgb, currentColor 40%, transparent);
+    transition: color 0.3s var(--ease), text-decoration-color 0.3s var(--ease);
+  }
+
+  .foot__sitemap:hover {
+    color: var(--bone);
+    text-decoration-color: currentColor;
   }
 
   .foot__omd {

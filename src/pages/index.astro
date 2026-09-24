@@ -3,6 +3,7 @@ import { Image } from "astro:assets";
 import Base from "../layouts/Base.astro";
 import Nav from "../components/Nav.astro";
 import Footer from "../components/Footer.astro";
+import { webPage } from "../lib/schema";
 import ReferBand from "../components/ReferBand.astro";
 import { SITE, STATS } from "../site.config";
 import { valentineCount, valentineStates } from "../data/locations";
@@ -45,11 +46,14 @@ const day = [
   { t: `${STATS.minutes} minutes`, d: "Local anaesthetic. No scalpel, one small opening, no stitches." },
   { t: "Drives home", d: "He drove himself in. He drives himself out. No sedation, no escort." },
 ];
+const title = `Dr Matt Valentine — No-scalpel vasectomy across QLD, VIC and WA`;
+const description = `Dr Matt Valentine has performed over ${STATS.career.replace("+", "")} vasectomies and operates ${valentineCount} clinics across Queensland, Victoria and Western Australia. Referral information for Australian GPs.`;
 ---
 
 <Base
-  title="Dr Matt Valentine — No-scalpel vasectomy across QLD, VIC and WA"
-  description={`Dr Matt Valentine has performed over ${STATS.career.replace("+", "")} vasectomies and operates ${valentineCount} clinics across Queensland, Victoria and Western Australia. Referral information for Australian GPs.`}
+  title={title}
+  description={description}
+  schema={webPage({ name: "Home", description, path: "/" }, Astro.site)}
 >
   <Nav />
 
@@ -78,11 +82,11 @@ const day = [
           in Queensland, Victoria and Western Australia.
         </p>
         <div class="hero__actions">
-          <a class="btn" href="/refer">
+          <a class="btn" href="/refer/">
             Refer a patient
             <span class="btn__arrow" aria-hidden="true">→</span>
           </a>
-          <a class="btn btn--ghost btn--on-dark" href="/vasectomy#clinics">
+          <a class="btn btn--ghost btn--on-dark" href="/vasectomy/#clinics">
             Find the nearest clinic
           </a>
         </div>
@@ -147,7 +151,7 @@ const day = [
             Dr Matt Valentine · FRACGP · AHPRA registration {SITE.ahpra}
           </p>
 
-          <a class="arrowlink" href="/about" data-reveal style="--delay:320ms">
+          <a class="arrowlink" href="/about/" data-reveal style="--delay:320ms">
             Read the long version
             <span class="btn__arrow" aria-hidden="true">→</span>
           </a>
@@ -212,7 +216,7 @@ const day = [
           }
         </ul>
 
-        <a class="btn btn--ghost coverage__cta" href="/vasectomy#clinics" data-reveal>
+        <a class="btn btn--ghost coverage__cta" href="/vasectomy/#clinics" data-reveal>
           See every clinic
           <span class="btn__arrow" aria-hidden="true">→</span>
         </a>

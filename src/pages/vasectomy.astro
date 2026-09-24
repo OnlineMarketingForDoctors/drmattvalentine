@@ -3,6 +3,7 @@ import { Image } from "astro:assets";
 import Base from "../layouts/Base.astro";
 import Nav from "../components/Nav.astro";
 import Footer from "../components/Footer.astro";
+import { webPage, medicalProcedure } from "../lib/schema";
 import PageHero from "../components/PageHero.astro";
 import LocationFinder from "../components/LocationFinder.astro";
 import ReferBand from "../components/ReferBand.astro";
@@ -33,11 +34,14 @@ const advantages = [
     v: "That is the figure after the Medicare rebate, and it is the same at every clinic. The equivalent procedure with a urologist can reach $5,000.",
   },
 ];
+const title = `No-scalpel vasectomy — technique, recovery, cost and clinic locations`;
+const description = `No-scalpel vasectomy with Dr Matt Valentine: the technique, the appointment, recovery, clearance testing, cost, and every clinic across Queensland, Victoria and Western Australia.`;
 ---
 
 <Base
-  title="No-scalpel vasectomy — technique, recovery, cost and clinic locations"
-  description="No-scalpel vasectomy with Dr Matt Valentine: the technique, the appointment, recovery, clearance testing, cost, and every clinic across Queensland, Victoria and Western Australia."
+  title={title}
+  description={description}
+  schema={[webPage({ name: "The procedure", description, path: "/vasectomy/" }, Astro.site), medicalProcedure(Astro.site)]}
 >
   <Nav />
 

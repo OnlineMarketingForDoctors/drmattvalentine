@@ -6,9 +6,23 @@ import "../styles/global.css";
 interface Props {
   title: string;
   description: string;
+  /**
+   * Force noindex on this page regardless of the site-wide switch. Used by
+   * the thank-you pages, which must stay out of the index even after launch
+   * — a thank-you page ranking for the practice is worse than useless.
+   */
+  noindex?: boolean;
+  /** JSON-LD for this page. One object or several; emitted as one script. */
+  schema?: Record<string, unknown> | Record<string, unknown>[];
 }
 
-const { title, description } = Astro.props;
+const { title, description, noindex = false, schema } = Astro.props;
+
+/* Canonical always carries the trailing slash, matching trailingSlash:'always'. */
+const canonical = new URL(Astro.url.pathname, Astro.site).href;
+
+const blocks = schema ? (Array.isArray(schema) ? schema : [schema]) : [];
+const robots = NOINDEX || noindex;
 ---
 
 <!doctype html>
@@ -19,10 +33,13 @@ const { title, description } = Astro.props;
     <title>{title}</title>
     <meta name="description" content={description} />
 
+    <link rel="canonical" href={canonical} />
+
     {/* Backstop half of the noindex switch. The X-Robots-Tag header in
         vercel.json is the primary control; both are driven by NOINDEX in
-        src/site.config.ts. See CLAUDE.md. */}
-    {NOINDEX && <meta name="robots" content="noindex, nofollow" />}
+        src/site.config.ts. A page may also opt in permanently via the
+        noindex prop. See CLAUDE.md. */}
+    {robots && <meta name="robots" content="noindex, nofollow" />}
 
     {/* Fonts are self-hosted (see scripts/fetch-fonts.sh). Preload only the
         two faces that paint above the fold. */}
@@ -45,6 +62,15 @@ const { title, description } = Astro.props;
     <link rel="alternate icon" href="/favicon.svg" />
 
     <meta name="theme-color" content="#0e1f1b" />
+
+    {
+      blocks.length > 0 && (
+        <script
+          type="application/ld+json"
+          set:html={JSON.stringify(blocks.length === 1 ? blocks[0] : blocks)}
+        />
+      )
+    }
   </head>
   <body>
     <a class="skip" href="#main">Skip to content</a>

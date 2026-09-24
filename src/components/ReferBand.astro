@@ -22,7 +22,7 @@ const { id = "refer" } = Astro.props;
       </p>
 
       <div class="refer__actions" data-reveal style="--delay:240ms">
-        <a class="btn" href="/refer">
+        <a class="btn" href="/refer/">
           Send a referral
           <span class="btn__arrow" aria-hidden="true">→</span>
         </a>
@@ -34,7 +34,7 @@ const { id = "refer" } = Astro.props;
       <p class="refer__note" data-reveal style="--delay:320ms">
         Not a GP? Patients book directly through <a
           href={SITE.vasectomyAustralia}
-          rel="noopener"
+          rel="nofollow noopener"
           target="_blank">Vasectomy Australia</a
         > rather than through these rooms.
       </p>

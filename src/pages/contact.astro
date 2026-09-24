@@ -2,17 +2,21 @@
 import Base from "../layouts/Base.astro";
 import Nav from "../components/Nav.astro";
 import Footer from "../components/Footer.astro";
+import { webPage } from "../lib/schema";
 import PageHero from "../components/PageHero.astro";
 import ReferBand from "../components/ReferBand.astro";
 import { SITE } from "../site.config";
 import { valentineCount } from "../data/locations";
 
 import desk from "../assets/generated/desk.webp";
+const title = `Contact Dr Matt Valentine — questions about a patient`;
+const description = `Contact Dr Matt Valentine's rooms about a patient referral for no-scalpel vasectomy. Phone 1800 SNIPME, email, or send a question directly.`;
 ---
 
 <Base
-  title="Contact Dr Matt Valentine — questions about a patient"
-  description="Contact Dr Matt Valentine's rooms about a patient referral for no-scalpel vasectomy. Phone 1800 SNIPME, email, or send a question directly."
+  title={title}
+  description={description}
+  schema={webPage({ name: "Contact", description, path: "/contact/" }, Astro.site)}
 >
   <Nav />
 
@@ -42,7 +46,7 @@ import desk from "../assets/generated/desk.webp";
           <p class="cform__aside" data-reveal style="--delay:220ms">
             Not a GP? Patients book directly through <a
               href={SITE.vasectomyAustralia}
-              rel="noopener"
+              rel="nofollow noopener"
               target="_blank">Vasectomy Australia</a
             > rather than through these rooms.
           </p>
@@ -59,7 +63,7 @@ import desk from "../assets/generated/desk.webp";
             <div>
               <dt>Facebook</dt>
               <dd>
-                <a href={SITE.facebook} rel="noopener noreferrer" target="_blank">
+                <a href={SITE.facebook} rel="nofollow noopener noreferrer" target="_blank">
                   Vasectomy Australia
                 </a>
               </dd>
@@ -114,7 +118,7 @@ import desk from "../assets/generated/desk.webp";
             If the question is simply "where is the nearest one", the full list
             is on the procedure page, filterable by state.
           </p>
-          <a class="btn btn--ghost btn--on-dark" href="/vasectomy#clinics">
+          <a class="btn btn--ghost btn--on-dark" href="/vasectomy/#clinics">
             Find a clinic
             <span class="btn__arrow" aria-hidden="true">→</span>
           </a>

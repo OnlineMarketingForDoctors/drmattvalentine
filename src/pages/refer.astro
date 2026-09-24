@@ -5,29 +5,18 @@ import Footer from "../components/Footer.astro";
 import PageHero from "../components/PageHero.astro";
 import { SITE, STATS } from "../site.config";
 import { valentineCount } from "../data/locations";
+import { webPage } from "../lib/schema";
 
 import instruments from "../assets/generated/instruments.webp";
 
-/* Field list mirrors the referral form on the Vasectomy Australia sites:
-   the patient's details first, then the referrer's. */
-const patientFields = [
-  { id: "p-first", name: "patient_first", label: "Patient's first name", type: "text", autocomplete: "off", required: true },
-  { id: "p-last", name: "patient_last", label: "Patient's last name", type: "text", autocomplete: "off", required: true },
-  { id: "p-phone", name: "patient_phone", label: "Patient's phone number", type: "tel", autocomplete: "off", required: true },
-  { id: "p-email", name: "patient_email", label: "Patient's email", type: "email", autocomplete: "off", required: false },
-];
-
-const doctorFields = [
-  { id: "d-first", name: "doctor_first", label: "Doctor's first name", type: "text", autocomplete: "given-name", required: true },
-  { id: "d-last", name: "doctor_last", label: "Doctor's last name", type: "text", autocomplete: "family-name", required: true },
-  { id: "d-clinic", name: "doctor_clinic", label: "Doctor's clinic name", type: "text", autocomplete: "organization", required: true },
-  { id: "d-email", name: "doctor_email", label: "Doctor's email", type: "email", autocomplete: "email", required: true },
-];
+const title = "Refer a patient — Dr Matt Valentine";
+const description = `Refer a patient to Dr Matt Valentine for no-scalpel vasectomy. Send the patient's details and your practice details, across ${valentineCount} clinics in Queensland, Victoria and Western Australia.`;
 ---
 
 <Base
-  title="Refer a patient — Dr Matt Valentine"
-  description={`Refer a patient to Dr Matt Valentine for no-scalpel vasectomy. Send the patient's details and your practice details, across ${valentineCount} clinics in Queensland, Victoria and Western Australia.`}
+  title={title}
+  description={description}
+  schema={webPage({ name: "Refer a patient", description, path: "/refer/" }, Astro.site)}
 >
   <Nav />
 
@@ -60,94 +49,47 @@ const doctorFields = [
         </div>
 
         {/*
-          Not wired to a backend yet, by request. The submit handler blocks the
-          default GET so the page cannot appear to succeed while going nowhere.
-          Point it at a real endpoint before launch and drop the status line.
+          Wufoo-hosted referral form, supplied by the practice. The snippet is
+          third-party and must run exactly as written, so it carries is:inline
+          to keep Astro from bundling or rewriting it.
+
+          The redirect after submission is configured in Wufoo itself, NOT
+          here — point it at /thank-you-refer/. The <div> below is Wufoo's own
+          no-JS fallback.
         */}
-        <form class="rform" data-rform novalidate data-reveal style="--delay:120ms">
-          <fieldset class="rform__set">
-            <legend class="rform__legend">Patient's details</legend>
-            <div class="rform__grid">
-              {
-                patientFields.map((f) => (
-                  <div class="field">
-                    <label for={f.id}>
-                      {f.label}
-                      {!f.required && <span class="field__opt">optional</span>}
-                    </label>
-                    <input
-                      id={f.id}
-                      name={f.name}
-                      type={f.type}
-                      autocomplete={f.autocomplete}
-                      required={f.required}
-                    />
-                  </div>
-                ))
-              }
-            </div>
-          </fieldset>
-
-          <fieldset class="rform__set">
-            <legend class="rform__legend">Referring doctor's details</legend>
-            <div class="rform__grid">
-              {
-                doctorFields.map((f) => (
-                  <div class="field">
-                    <label for={f.id}>{f.label}</label>
-                    <input
-                      id={f.id}
-                      name={f.name}
-                      type={f.type}
-                      autocomplete={f.autocomplete}
-                      required={f.required}
-                    />
-                  </div>
-                ))
-              }
-            </div>
-          </fieldset>
-
-          <div class="field field--wide">
-            <label for="r-notes">
-              Anything he should know <span class="field__opt">optional</span>
-            </label>
-            <textarea id="r-notes" name="notes" rows="4"></textarea>
+        <div class="rform rform--embed" data-reveal style="--delay:120ms">
+          <div id="wufoo-z1funy0c0agqy7q">
+            Fill out my <a
+              href="https://vasectomyaustralia.wufoo.com/forms/z1funy0c0agqy7q"
+              target="_blank"
+              rel="nofollow noopener">online form</a
+            >.
           </div>
-
-          <div class="rform__actions">
-            <button class="btn" type="submit">
-              Send referral
-              <span class="btn__arrow" aria-hidden="true">→</span>
-            </button>
-            <p class="rform__status" data-rform-status role="status" aria-live="polite"></p>
-          </div>
-        </form>
+          <script type="text/javascript" is:inline>
+            var z1funy0c0agqy7q;(function(d, t) {
+            var s = d.createElement(t), options = {
+            'userName':'vasectomyaustralia',
+            'formHash':'z1funy0c0agqy7q',
+            'autoResize':true,
+            'height':'627',
+            'async':true,
+            'host':'wufoo.com',
+            'header':'show',
+            'ssl':true};
+            s.src = ('https:' == d.location.protocol ?'https://':'http://') + 'secure.wufoo.com/scripts/embed/form.js';
+            s.onload = s.onreadystatechange = function() {
+            var rs = this.readyState; if (rs) if (rs != 'complete') if (rs != 'loaded') return;
+            try { z1funy0c0agqy7q = new WufooForm();z1funy0c0agqy7q.initialize(options);z1funy0c0agqy7q.display(); } catch (e) { }};
+            var scr = d.getElementsByTagName(t)[0], par = scr.parentNode; par.insertBefore(s, scr);
+            })(document, 'script');
+          </script>
+        </div>
       </div>
     </section>
   </main>
 
   <Footer />
 </Base>
-
-<script>
-  /*
-   * Deliberately not connected to a submission endpoint yet. Rather than let
-   * the browser fire a default GET that silently loses the referral, this
-   * blocks submission and says so. Replace with a real POST before launch.
-   */
-  const form = document.querySelector<HTMLFormElement>("[data-rform]");
-  const status = document.querySelector<HTMLElement>("[data-rform-status]");
-
-  form?.addEventListener("submit", (e) => {
-    e.preventDefault();
-    if (status) {
-      status.textContent =
-        "This form is not connected yet — please phone 1800 764 763 to refer.";
-      status.dataset.state = "pending";
-    }
-  });
-</script>
 
 <style>
   .refer__inner {
@@ -183,113 +125,30 @@ const doctorFields = [
     border-color: var(--iodine);
   }
 
-  /* ---- form ---- */
-  .rform {
-    display: grid;
-    gap: 2rem;
-    padding: clamp(1.5rem, 3vw, 2.5rem);
+  /* ---- embedded form ---- */
+  .rform--embed {
+    padding: clamp(1rem, 2vw, 1.5rem);
     background: var(--bone-pure);
     border: 1px solid color-mix(in srgb, var(--ink) 12%, transparent);
   }
 
-  .rform__set {
-    margin: 0;
-    padding: 0;
+  /* Wufoo injects its own iframe; it has to be free to size itself since
+     autoResize is on, and it must not overflow the card on a phone. */
+  .rform--embed :global(iframe) {
+    display: block;
+    width: 100%;
+    max-width: 100%;
     border: 0;
   }
 
-  .rform__legend {
-    display: block;
-    width: 100%;
-    padding: 0 0 0.9rem;
-    margin-bottom: 1.25rem;
-    font-family: var(--mono);
-    font-size: 0.68rem;
-    font-weight: 500;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    color: var(--drape);
-    border-bottom: 1px solid color-mix(in srgb, var(--ink) 14%, transparent);
-  }
-
-  .rform__grid {
-    display: grid;
-    gap: 1.25rem;
-  }
-
-  .field {
-    display: grid;
-    gap: 0.45rem;
-  }
-
-  .field label {
-    font-family: var(--mono);
-    font-size: 0.66rem;
-    font-weight: 500;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--drape);
-  }
-
-  .field__opt {
-    margin-left: 0.6em;
-    text-transform: none;
-    letter-spacing: 0.04em;
-    color: color-mix(in srgb, var(--ink) 45%, transparent);
-  }
-
-  .field input,
-  .field textarea {
-    width: 100%;
-    padding: 0.85em 1em;
-    font-family: var(--body);
-    font-size: 1rem;
-    color: var(--ink);
-    background: var(--bone);
-    border: 1px solid color-mix(in srgb, var(--ink) 18%, transparent);
-    border-radius: 0;
-    transition: border-color 0.3s var(--ease), background-color 0.3s var(--ease);
-  }
-
-  .field textarea {
-    resize: vertical;
-    min-height: 6.5rem;
-  }
-
-  .field input:focus,
-  .field textarea:focus {
-    outline: none;
-    border-color: var(--drape);
-    background: var(--bone-pure);
-  }
-
-  .field input:focus-visible,
-  .field textarea:focus-visible {
-    outline: 2px solid var(--iodine-bright);
-    outline-offset: 2px;
-  }
-
-  .rform__actions {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 1rem;
-  }
-
-  .rform__status {
-    font-size: 0.88rem;
+  /* The no-JS fallback line, which Wufoo replaces once the form loads. */
+  .rform--embed #wufoo-z1funy0c0agqy7q {
+    font-size: 0.95rem;
     color: var(--ink-soft);
-    max-width: 34ch;
   }
 
-  .rform__status[data-state="pending"] {
+  .rform--embed #wufoo-z1funy0c0agqy7q a {
     color: var(--iodine);
-  }
-
-  @media (min-width: 34rem) {
-    .rform__grid {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
   }
 
   @media (min-width: 62rem) {

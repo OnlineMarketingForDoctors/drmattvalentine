@@ -3,6 +3,7 @@ import { Image } from "astro:assets";
 import Base from "../layouts/Base.astro";
 import Nav from "../components/Nav.astro";
 import Footer from "../components/Footer.astro";
+import { webPage } from "../lib/schema";
 import PageHero from "../components/PageHero.astro";
 import ReferBand from "../components/ReferBand.astro";
 import { SITE, STATS } from "../site.config";
@@ -67,11 +68,14 @@ const career = [
       `practises aviation medicine.`,
   },
 ];
+const title = `About Dr Matt Valentine — vasectomist, Brisbane`;
+const description = `Dr Matt Valentine trained in Adelaide, spent five years as an RAAF Aviation Medical Officer, and has performed over 25,000 no-scalpel vasectomies. Background, training and qualifications.`;
 ---
 
 <Base
-  title="About Dr Matt Valentine — vasectomist, Brisbane"
-  description="Dr Matt Valentine trained in Adelaide, spent five years as an RAAF Aviation Medical Officer, and has performed over 25,000 no-scalpel vasectomies. Background, training and qualifications."
+  title={title}
+  description={description}
+  schema={webPage({ name: "About Dr Matt Valentine", description, path: "/about/" }, Astro.site)}
 >
   <Nav />
 
