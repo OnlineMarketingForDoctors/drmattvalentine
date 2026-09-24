@@ -135,7 +135,20 @@ and the footer's agency credit stay in the `.astro` files.
   published documents are read; the dataset is public so no token is needed.
 - Project ID and dataset default in `astro.config.mjs` (Vercel reads no `.env`
   from the repo); `PUBLIC_SANITY_PROJECT_ID` / `PUBLIC_SANITY_DATASET` override.
-- Publishing in Studio does not rebuild the site yet. Redeploy to pick up edits.
+- Publishing in Studio rebuilds production. A Sanity webhook, "Rebuild site
+  on Vercel" (project p6evl32l, dataset `production`, published documents
+  only), calls a Vercel deploy hook on create, update or delete. Its filter
+  names every type the site reads: `siteSettings`, `stats`, `page`,
+  `clinicRegion`, `clinic`, `careerMilestone`, `commitment`,
+  `appointmentStep`, `advantage`. **When you add a schema type the site
+  reads, add it to that filter too**, or edits to it will not go live. Manage
+  it at sanity.io/manage → project → API → Webhooks.
+- The deploy hook URL triggers production deploys, so treat it as a secret:
+  it lives only in the Sanity webhook, never in the repo.
+- A rebuild runs the same fail-loudly loaders, so publishing an empty
+  required field makes that deploy fail and production stays on the last good
+  build. Check the Vercel deployment after publishing if a change does not
+  appear.
 - `NOINDEX` stays in `src/site.config.ts`: it generates `vercel.json`.
 
 ### Seed files, not live content
