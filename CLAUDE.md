@@ -129,6 +129,23 @@ files.
 - Publishing in Studio does not rebuild the site yet. Redeploy to pick up edits.
 - `NOINDEX` stays in `src/site.config.ts`: it generates `vercel.json`.
 
+### Seed files, not live content
+
+`src/data/` (`site.ts`, `locations.ts`, `pages.ts`, `lists.ts`) is the
+**seed source only**. Nothing on the site imports it; the live content is in
+Studio. `npm run sanity:seed` writes `dist-sanity/seed.ndjson` (gitignored),
+imported once from `studio-drmattvalentine/` with
+`npx sanity dataset import ../dist-sanity/seed.ndjson --dataset production`.
+
+- Fixed `_id`: `siteSettings`, `stats`, `page-*`, `region-*` (clinics
+  reference regions). `--replace` overwrites them; `--missing` skips them.
+- No `_id`: clinics and the list items. Importing again **duplicates** them,
+  so delete that type's documents before re-seeding it.
+- Curated lists carry `order: 1, 2, 3…`. Imported documents share one
+  `_createdAt`, so never sort by creation date, and alphabetical would
+  reshuffle them.
+- Re-seeding overwrites Studio edits. Check for them first.
+
 ## Structured data
 
 `src/lib/schema.ts` builds the JSON-LD. Every field must restate something

@@ -9,7 +9,8 @@ export const orderField = defineField({
   name: 'order',
   title: 'Order',
   type: 'number',
-  description: 'Lower numbers come first. Leave gaps (10, 20, 30) so items can be slotted in.',
+  description:
+    'Lower numbers come first (1, 2, 3…). To slot an item in, renumber the ones after it.',
   validation: (rule) => rule.required().integer().min(0),
 })
 
