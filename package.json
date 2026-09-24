@@ -11,7 +11,10 @@
     "sync:noindex": "node scripts/sync-noindex.mjs"
   },
   "dependencies": {
-    "astro": "^5.0.0"
+    "@sanity/astro": "^3.5.1",
+    "@sanity/client": "^8.7.0",
+    "astro": "^5.0.0",
+    "groq": "^6.16.0"
   },
   "devDependencies": {
     "playwright": "^1.62.1",
