@@ -6,68 +6,16 @@ import Footer from "../components/Footer.astro";
 import { webPage } from "../lib/schema";
 import PageHero from "../components/PageHero.astro";
 import ReferBand from "../components/ReferBand.astro";
-import { SITE, STATS } from "../site.config";
-import { valentineCount } from "../data/locations";
+import { getCareer, getLocations, getSettings, getStats } from "../sanity/loaders";
+
+const [SITE, STATS, { valentineCount }] = await Promise.all([getSettings(), getStats(), getLocations()]);
 
 import corridor from "../assets/generated/corridor.webp";
 import headshot from "../assets/photos/valentine-headshot.jpeg";
 import consult from "../assets/photos/valentine-consult.jpg";
 
 /* A real chronology, so the years carry information rather than decoration. */
-const career = [
-  {
-    year: "2000",
-    title: "Adelaide",
-    body:
-      "Born and raised in Adelaide, and stayed for medicine at the University " +
-      "of Adelaide. Internship and residency followed at the Royal Adelaide Hospital.",
-  },
-  {
-    year: "2001–06",
-    title: "Royal Australian Air Force",
-    body:
-      "Five years full time as an Aviation Medical Officer, coordinating and " +
-      "conducting aeromedical evacuations, humanitarian assistance and " +
-      "peacekeeping work — East Timor, Bali and the Middle East Area of " +
-      "Operations, plus border control operations with the Royal Australian " +
-      "Navy. He attained fellowship of the Royal Australian College of General " +
-      "Practitioners during this period.",
-  },
-  {
-    year: "2008",
-    title: "Brisbane, and the first vasectomies",
-    body:
-      "He joined the partnership at Walton Bridge Medical Centre in The Gap, " +
-      "practising as a GP and, keeping the aviation thread alive, as a " +
-      "Designated Aviation Medical Examiner. It was here that he began training " +
-      "in the traditional vasectomy technique under Dr Greg Silver.",
-  },
-  {
-    year: "2010",
-    title: "Volume",
-    body:
-      "Vasectomies for Family Planning Queensland, then Montserrat Private Day " +
-      "Hospitals and Marie Stopes Australia. The procedure moved from an " +
-      "interest to the centre of his week.",
-  },
-  {
-    year: "2016",
-    title: "The United States",
-    body:
-      "He travelled to the USA to train in the no-scalpel technique. Already " +
-      "holding the traditional approach, he was able to fold the two together " +
-      "into the method he uses now.",
-  },
-  {
-    year: "Now",
-    title: "Vasectomy Australia",
-    body:
-      `He works alongside Dr Geoff Cashion at Vasectomy Australia, running ` +
-      `${valentineCount} clinics across Queensland, Victoria and Western ` +
-      `Australia. He still maintains his partnership at Walton Bridge and still ` +
-      `practises aviation medicine.`,
-  },
-];
+const career = await getCareer();
 const title = `About Dr Matt Valentine — vasectomist, Brisbane`;
 const description = `Dr Matt Valentine trained in Adelaide, spent five years as an RAAF Aviation Medical Officer, and has performed over 25,000 no-scalpel vasectomies. Background, training and qualifications.`;
 ---
@@ -75,7 +23,7 @@ const description = `Dr Matt Valentine trained in Adelaide, spent five years as 
 <Base
   title={title}
   description={description}
-  schema={webPage({ name: "About Dr Matt Valentine", description, path: "/about/" }, Astro.site)}
+  schema={await webPage({ name: "About Dr Matt Valentine", description, path: "/about/" }, Astro.site)}
 >
   <Nav />
 

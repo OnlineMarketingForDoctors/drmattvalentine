@@ -1,5 +1,7 @@
 ---
-import { SITE } from "../site.config";
+import { getSettings } from "../sanity/loaders";
+
+const SITE = await getSettings();
 
 const year = new Date().getFullYear();
 ---

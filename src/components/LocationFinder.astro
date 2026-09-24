@@ -1,5 +1,7 @@
 ---
-import { valentineStates, cashionStates, valentineCount, cashionCount } from "../data/locations";
+import { getLocations } from "../sanity/loaders";
+
+const { valentineStates, cashionStates, valentineCount, cashionCount } = await getLocations();
 
 interface Props {
   id?: string;

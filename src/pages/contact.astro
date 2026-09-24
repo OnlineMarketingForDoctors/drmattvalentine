@@ -5,8 +5,9 @@ import Footer from "../components/Footer.astro";
 import { webPage } from "../lib/schema";
 import PageHero from "../components/PageHero.astro";
 import ReferBand from "../components/ReferBand.astro";
-import { SITE } from "../site.config";
-import { valentineCount } from "../data/locations";
+import { getLocations, getSettings } from "../sanity/loaders";
+
+const [SITE, { valentineCount }] = await Promise.all([getSettings(), getLocations()]);
 
 import desk from "../assets/generated/desk.webp";
 const title = `Contact Dr Matt Valentine — questions about a patient`;
@@ -16,7 +17,7 @@ const description = `Contact Dr Matt Valentine's rooms about a patient referral 
 <Base
   title={title}
   description={description}
-  schema={webPage({ name: "Contact", description, path: "/contact/" }, Astro.site)}
+  schema={await webPage({ name: "Contact", description, path: "/contact/" }, Astro.site)}
 >
   <Nav />
 

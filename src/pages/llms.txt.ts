@@ -1,16 +1,20 @@
 /**
  * /llms.txt — a plain-text map of the site for language models.
  *
- * Built from src/data/pages.ts so it cannot drift from /sitemap/, and from
- * site.config so the figures match what the pages actually say. The
+ * Built from the same Sanity loaders as /sitemap/ and the pages, so it cannot
+ * drift from them and the figures match what the pages actually say. The
  * thank-you pages are excluded along with everything else not in that list.
  */
 import type { APIRoute } from "astro";
-import { SITE, STATS } from "../site.config";
-import { pages } from "../data/pages";
-import { valentineStates, valentineCount } from "../data/locations";
+import { getLocations, getPages, getSettings, getStats } from "../sanity/loaders";
 
-export const GET: APIRoute = ({ site }) => {
+export const GET: APIRoute = async ({ site }) => {
+  const [SITE, STATS, pages, { valentineStates, valentineCount }] = await Promise.all([
+    getSettings(),
+    getStats(),
+    getPages(),
+    getLocations(),
+  ]);
   const base = (site ?? new URL("https://drmattvalentine.com.au")).origin;
   const url = (p: string) => `${base}${p}`;
   const states = valentineStates.map((s) => s.name).join(", ");

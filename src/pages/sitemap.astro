@@ -3,7 +3,9 @@ import Base from "../layouts/Base.astro";
 import Nav from "../components/Nav.astro";
 import Footer from "../components/Footer.astro";
 import { webPage } from "../lib/schema";
-import { pages } from "../data/pages";
+import { getPages } from "../sanity/loaders";
+
+const pages = await getPages();
 
 const title = "Sitemap — Dr Matt Valentine";
 const description = "Every page on drmattvalentine.com.au.";
@@ -12,7 +14,7 @@ const description = "Every page on drmattvalentine.com.au.";
 <Base
   title={title}
   description={description}
-  schema={webPage({ name: "Sitemap", description, path: "/sitemap/" }, Astro.site)}
+  schema={await webPage({ name: "Sitemap", description, path: "/sitemap/" }, Astro.site)}
 >
   <Nav light />
 

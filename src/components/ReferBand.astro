@@ -1,6 +1,6 @@
 ---
 import { Image } from "astro:assets";
-import { SITE, STATS } from "../site.config";
+import { getSettings, getStats } from "../sanity/loaders";
 import orchidImg from "../assets/generated/orchidometer.png";
 
 interface Props {
@@ -8,6 +8,7 @@ interface Props {
   id?: string;
 }
 const { id = "refer" } = Astro.props;
+const [SITE, STATS] = await Promise.all([getSettings(), getStats()]);
 ---
 
 <section class="band band--dark refer" id={id}>

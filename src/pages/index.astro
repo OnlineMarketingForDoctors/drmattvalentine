@@ -5,47 +5,26 @@ import Nav from "../components/Nav.astro";
 import Footer from "../components/Footer.astro";
 import { webPage } from "../lib/schema";
 import ReferBand from "../components/ReferBand.astro";
-import { SITE, STATS } from "../site.config";
-import { valentineCount, valentineStates } from "../data/locations";
+import { getDay, getLocations, getPillars, getSettings, getStats } from "../sanity/loaders";
 
 import heroImg from "../assets/generated/hero.webp";
 import portrait from "../assets/photos/valentine-polo.jpg";
 import leaving from "../assets/generated/leaving.webp";
 import drape from "../assets/generated/drape.webp";
 
+const [SITE, STATS, { valentineCount, valentineStates }] = await Promise.all([
+  getSettings(),
+  getStats(),
+  getLocations(),
+]);
 const stateCount = valentineStates.length;
 
 /* The three commitments, in his own words on the current site. */
-const pillars = [
-  {
-    label: "Comprehensive care",
-    body:
-      "He has spent the years since 2008 narrowing his practice to this one procedure, " +
-      "and treats the safety and effectiveness of it as the whole job rather than " +
-      "a sideline to general practice.",
-  },
-  {
-    label: "Urgent referrals",
-    body:
-      `Urgent cases get immediate consideration. Most can be accommodated within ` +
-      `${STATS.urgentWeeks} weeks of referral, wherever they sit on the run.`,
-  },
-  {
-    label: "Available for advice",
-    body:
-      "An open invitation to referring doctors: call him. Access to surgical " +
-      "judgement before you refer is often worth more than the referral itself.",
-  },
-];
+const pillars = await getPillars();
 
 /* The patient's day, in order. Order is the information here — this is a real
    sequence with a real clock attached, which is why it carries numbers. */
-const day = [
-  { t: "Arrive", d: "No fasting, no pre-admission, no hospital. He walks in off the street." },
-  { t: "Consent", d: "The conversation happens on the day. Same visit, same room, no second trip." },
-  { t: `${STATS.minutes} minutes`, d: "Local anaesthetic. No scalpel, one small opening, no stitches." },
-  { t: "Drives home", d: "He drove himself in. He drives himself out. No sedation, no escort." },
-];
+const day = await getDay();
 const title = `Dr Matt Valentine — No-scalpel vasectomy across QLD, VIC and WA`;
 const description = `Dr Matt Valentine has performed over ${STATS.career.replace("+", "")} vasectomies and operates ${valentineCount} clinics across Queensland, Victoria and Western Australia. Referral information for Australian GPs.`;
 ---
@@ -53,7 +32,7 @@ const description = `Dr Matt Valentine has performed over ${STATS.career.replace
 <Base
   title={title}
   description={description}
-  schema={webPage({ name: "Home", description, path: "/" }, Astro.site)}
+  schema={await webPage({ name: "Home", description, path: "/" }, Astro.site)}
 >
   <Nav />
 

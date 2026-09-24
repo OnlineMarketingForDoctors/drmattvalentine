@@ -4,14 +4,14 @@
  * same way body text is a claim to a reader, and for a regulated health
  * service the two must not disagree.
  */
-import { SITE, STATS } from "../site.config";
-import { valentineStates } from "../data/locations";
+import { getLocations, getSettings, getStats } from "../sanity/loaders";
 
 const abs = (path: string, site: URL | undefined) =>
   new URL(path, site ?? "https://drmattvalentine.com.au").href;
 
 /** The practitioner, including the AHPRA number required on advertising. */
-export function physician(site: URL | undefined) {
+export async function physician(site: URL | undefined) {
+  const [SITE, { valentineStates }] = await Promise.all([getSettings(), getLocations()]);
   return {
     "@type": "Physician",
     "@id": abs("/#physician", site),
@@ -35,10 +35,11 @@ export function physician(site: URL | undefined) {
 }
 
 /** A plain content page. */
-export function webPage(
+export async function webPage(
   { name, description, path }: { name: string; description: string; path: string },
   site: URL | undefined
 ) {
+  const SITE = await getSettings();
   return {
     "@context": "https://schema.org",
     "@type": "WebPage",
@@ -52,7 +53,7 @@ export function webPage(
       name: SITE.name,
       url: abs("/", site),
     },
-    about: physician(site),
+    about: await physician(site),
   };
 }
 
@@ -60,7 +61,8 @@ export function webPage(
  * The procedure page. Every field below restates something the page says in
  * prose — nothing here is a new clinical claim.
  */
-export function medicalProcedure(site: URL | undefined) {
+export async function medicalProcedure(site: URL | undefined) {
+  const STATS = await getStats();
   return {
     "@context": "https://schema.org",
     "@type": "MedicalProcedure",
@@ -80,6 +82,6 @@ export function medicalProcedure(site: URL | undefined) {
       "A vasectomy is not effective on the day it is performed. The patient " +
       "requires a post-vasectomy semen analysis and must continue other " +
       "contraception until that result confirms clearance.",
-    performer: physician(site),
+    performer: await physician(site),
   };
 }

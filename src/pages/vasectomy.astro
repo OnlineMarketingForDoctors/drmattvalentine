@@ -7,8 +7,9 @@ import { webPage, medicalProcedure } from "../lib/schema";
 import PageHero from "../components/PageHero.astro";
 import LocationFinder from "../components/LocationFinder.astro";
 import ReferBand from "../components/ReferBand.astro";
-import { SITE, STATS } from "../site.config";
-import { valentineCount } from "../data/locations";
+import { getAdvantages, getLocations, getSettings, getStats } from "../sanity/loaders";
+
+const [SITE, STATS, { valentineCount }] = await Promise.all([getSettings(), getStats(), getLocations()]);
 
 import procedureRoom from "../assets/generated/procedure-room.webp";
 import instruments from "../assets/generated/instruments.webp";
@@ -16,24 +17,7 @@ import leaving from "../assets/generated/leaving.webp";
 
 /* Straight from the current site's list of advantages, expanded only where a
    referring GP would otherwise have to ring and ask. */
-const advantages = [
-  {
-    k: "Local anaesthetic",
-    v: `The procedure takes under ${STATS.minutes} minutes and is performed under local anaesthetic. No general, no sedation, no theatre booking.`,
-  },
-  {
-    k: "He drives himself",
-    v: "Your patient drives to the appointment and drives home from it. No escort, no recovery bay, no day off arranged around someone else's roster.",
-  },
-  {
-    k: "Quick recovery",
-    v: "Most men are back to desk work within a day or two and to physical work inside a week, with the usual advice about lifting and rest in between.",
-  },
-  {
-    k: `${STATS.cost} out of pocket`,
-    v: "That is the figure after the Medicare rebate, and it is the same at every clinic. The equivalent procedure with a urologist can reach $5,000.",
-  },
-];
+const advantages = await getAdvantages();
 const title = `No-scalpel vasectomy — technique, recovery, cost and clinic locations`;
 const description = `No-scalpel vasectomy with Dr Matt Valentine: the technique, the appointment, recovery, clearance testing, cost, and every clinic across Queensland, Victoria and Western Australia.`;
 ---
@@ -41,7 +25,7 @@ const description = `No-scalpel vasectomy with Dr Matt Valentine: the technique,
 <Base
   title={title}
   description={description}
-  schema={[webPage({ name: "The procedure", description, path: "/vasectomy/" }, Astro.site), medicalProcedure(Astro.site)]}
+  schema={[await webPage({ name: "The procedure", description, path: "/vasectomy/" }, Astro.site), await medicalProcedure(Astro.site)]}
 >
   <Nav />
 
