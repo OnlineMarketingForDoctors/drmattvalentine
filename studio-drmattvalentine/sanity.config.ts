@@ -1,7 +1,8 @@
 import {defineConfig} from 'sanity'
 import {structureTool} from 'sanity/structure'
 import {visionTool} from '@sanity/vision'
-import {schemaTypes} from './schemaTypes'
+import {schemaTypes, SINGLETONS} from './schemaTypes'
+import {structure} from './structure'
 
 export default defineConfig({
   name: 'default',
@@ -10,9 +11,20 @@ export default defineConfig({
   projectId: 'p6evl32l',
   dataset: 'production',
 
-  plugins: [structureTool(), visionTool()],
+  plugins: [structureTool({structure}), visionTool()],
 
   schema: {
     types: schemaTypes,
+    // Singletons are reached from the structure, never created from "New document".
+    templates: (templates) => templates.filter(({schemaType}) => !SINGLETONS.includes(schemaType)),
+  },
+
+  document: {
+    actions: (actions, {schemaType}) =>
+      SINGLETONS.includes(schemaType)
+        ? actions.filter(
+            ({action}) => action && ['publish', 'discardChanges', 'restore'].includes(action),
+          )
+        : actions,
   },
 })
