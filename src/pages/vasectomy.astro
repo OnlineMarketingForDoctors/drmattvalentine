@@ -7,6 +7,7 @@ import PageHero from "../components/PageHero.astro";
 import LocationFinder from "../components/LocationFinder.astro";
 import ReferBand from "../components/ReferBand.astro";
 import { SITE, STATS } from "../site.config";
+import { valentineCount } from "../data/locations";
 
 import procedureRoom from "../assets/generated/procedure-room.webp";
 import instruments from "../assets/generated/instruments.webp";
@@ -44,7 +45,7 @@ const advantages = [
     <PageHero
       eyebrow="The procedure"
       title="No scalpel, one opening, no stitches."
-      lede="Under local anaesthetic, in under twenty minutes, at whichever of the nineteen clinics is nearest your patient."
+      lede={`Under local anaesthetic, in under ${STATS.minutes} minutes, at whichever of the ${valentineCount} clinics is nearest your patient.`}
       image={procedureRoom}
       imageAlt="An empty, prepared day-procedure room with a surgical green drape and instrument trolley"
       focus="center"

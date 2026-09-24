@@ -23,7 +23,7 @@ export interface StateGroup {
   clinics: Clinic[];
 }
 
-/** Dr Valentine — 19 clinics, three states. */
+/** Dr Valentine — three states. Count is derived below, never written out. */
 export const valentineStates: StateGroup[] = [
   {
     code: 'QLD',
@@ -34,7 +34,6 @@ export const valentineStates: StateGroup[] = [
       { area: 'Sunshine Coast', clinic: 'Ochre Medical Centre Sippy Downs' },
       { area: 'Springfield', clinic: 'Springfield Doctors' },
       { area: 'Toowoomba', clinic: 'Ochre Medical Centre Wyalla' },
-      { area: 'Hervey Bay', clinic: 'Eli Waters Medical Centre' },
       { area: 'Gladstone', clinic: 'Vitality Solutions' },
       { area: 'Rockhampton', clinic: 'CQ Doctors, 24 Upper Dawson Rd' },
       { area: 'Townsville', clinic: 'SmartClinics Annandale Medical Centre' },
