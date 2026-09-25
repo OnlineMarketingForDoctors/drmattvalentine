@@ -1,24 +1,17 @@
 ---
-import { Image } from "astro:assets";
 import Base from "../layouts/Base.astro";
 import Nav from "../components/Nav.astro";
 import Footer from "../components/Footer.astro";
-import { webPage, medicalProcedure } from "../lib/schema";
 import PageHero from "../components/PageHero.astro";
 import LocationFinder from "../components/LocationFinder.astro";
 import ReferBand from "../components/ReferBand.astro";
-import { getAdvantages, getLocations, getPage, getSettings, getStats } from "../sanity/loaders";
+import RichText from "../components/RichText.astro";
+import SanityImage from "../components/SanityImage.astro";
+import { webPage, medicalProcedure } from "../lib/schema";
+import { getPage, getSettings } from "../sanity/loaders";
 
-const [SITE, STATS, { valentineCount }] = await Promise.all([getSettings(), getStats(), getLocations()]);
-
-import procedureRoom from "../assets/generated/procedure-room.webp";
-import instruments from "../assets/generated/instruments.webp";
-import leaving from "../assets/generated/leaving.webp";
-
-/* Straight from the current site's list of advantages, expanded only where a
-   referring GP would otherwise have to ring and ask. */
-const advantages = await getAdvantages();
-const page = await getPage("/vasectomy/");
+const [SITE, page] = await Promise.all([getSettings(), getPage("/vasectomy/")]);
+const { technique, advantages, clearance, locations, guide } = page;
 const title = page.metaTitle;
 const description = page.metaDescription;
 ---
@@ -32,51 +25,28 @@ const description = page.metaDescription;
 
   <main id="main">
     <PageHero
-      eyebrow={page.hero.eyebrow}
-      title={page.hero.heading}
-      lede={page.hero.lede}
-      image={procedureRoom}
-      imageAlt={page.hero.imageAlt}
-      focus="center"
-      crumb={page.hero.crumb}
+      eyebrow={page.eyebrow}
+      title={page.heading}
+      lede={page.lede}
+      image={page.heroImage}
+      crumb={page.breadcrumb}
     />
 
     <!-- ============================================ TECHNIQUE -->
     <section class="band tech" id="technique">
       <div class="wrap tech__inner">
         <div class="tech__body">
-          <p class="tag" data-reveal>The technique</p>
-          <h2 data-reveal style="--delay:80ms">Two techniques, folded together.</h2>
+          <p class="tag" data-reveal>{technique.eyebrow}</p>
+          <h2 data-reveal style="--delay:80ms">{technique.heading}</h2>
           <p class="lede" data-reveal style="--delay:160ms">
-            Dr Valentine has been performing vasectomies in Brisbane since
-            {STATS.startYear}, initially trained in the traditional technique by
-            Dr Greg Silver. In {STATS.nsvYear} he trained in the United States in
-            the no-scalpel technique.
+            {technique.lede}
           </p>
-          <p data-reveal style="--delay:220ms">
-            Holding both matters more than it sounds. The no-scalpel approach
-            uses a ringed clamp and a sharp dissecting forceps to reach the vas
-            through a single small opening that is spread rather than cut — but
-            when anatomy does not cooperate, the traditional training is what
-            there is to fall back on.
-          </p>
-          <p data-reveal style="--delay:270ms">
-            The opening is small enough that it is closed with a dressing rather
-            than sutures.
-          </p>
+          <RichText value={technique.body} reveal={{ start: 220 }} />
         </div>
-
         <figure class="tech__media" data-reveal style="--delay:140ms">
-          <Image
-            src={instruments}
-            alt="A no-scalpel vasectomy instrument set laid out on a surgical green drape"
-            widths={[600, 1000, 1500]}
-            sizes="(min-width: 62rem) 40vw, 90vw"
-            quality={80}
-          />
+          <SanityImage image={technique.image} widths={[600, 1000, 1500]} sizes="(min-width: 62rem) 40vw, 90vw" quality={80} />
           <figcaption>
-            The ringed clamp and dissecting forceps that give the technique its
-            name — no blade among them.
+            {technique.caption}
           </figcaption>
         </figure>
       </div>
@@ -85,16 +55,16 @@ const description = page.metaDescription;
     <!-- ============================================ ADVANTAGES -->
     <section class="band band--drape adv" id="advantages">
       <div class="wrap">
-        <p class="tag tag--pale" data-reveal>What to tell your patient</p>
+        <p class="tag tag--pale" data-reveal>{advantages.eyebrow}</p>
         <h2 class="adv__title" data-reveal style="--delay:80ms">
-          Four things that decide it for most men.
+          {advantages.heading}
         </h2>
         <dl class="adv__grid">
           {
-            advantages.map((a, i) => (
+            advantages.items.map((a: { heading: string; body: string }, i: number) => (
               <div class="advitem" data-reveal style={`--delay:${140 + i * 80}ms`}>
-                <dt>{a.k}</dt>
-                <dd>{a.v}</dd>
+                <dt>{a.heading}</dt>
+                <dd>{a.body}</dd>
               </div>
             ))
           }
@@ -106,34 +76,18 @@ const description = page.metaDescription;
     <section class="band clear" id="clearance">
       <div class="wrap clear__inner">
         <div class="clear__media" data-reveal>
-          <Image
-            src={leaving}
-            alt="A patient walking out of a suburban medical centre to the car park"
-            widths={[700, 1100, 1600]}
-            sizes="(min-width: 60rem) 46vw, 90vw"
-            quality={80}
-          />
+          <SanityImage image={clearance.image} widths={[700, 1100, 1600]} sizes="(min-width: 60rem) 46vw, 90vw" quality={80} />
         </div>
         <div class="clear__body">
-          <p class="tag" data-reveal>Afterwards</p>
-          <h2 data-reveal style="--delay:80ms">It is not contraception until it is cleared.</h2>
-          <p data-reveal style="--delay:160ms">
-            The single most important thing to say in the room: a vasectomy is
-            not effective on the day it is performed. Your patient needs a
-            post-vasectomy semen analysis, and must keep using other
-            contraception until that result confirms clearance.
-          </p>
-          <p data-reveal style="--delay:210ms">
-            The practice organises the test and the result. If anything about it
-            is unclear when it reaches you, ring — that is exactly the sort of
-            call Dr Valentine would rather take than not.
-          </p>
+          <p class="tag" data-reveal>{clearance.eyebrow}</p>
+          <h2 data-reveal style="--delay:80ms">{clearance.heading}</h2>
+          <RichText value={clearance.body} reveal={{ start: 160 }} />
         </div>
       </div>
     </section>
 
     <!-- ============================================ CLINICS -->
-    <LocationFinder id="clinics" />
+    <LocationFinder id="clinics" content={locations} />
 
     <!-- ============================================ GUIDE -->
     {/* Placeholder path: this becomes a direct download once the PDF is hosted.
@@ -142,21 +96,19 @@ const description = page.metaDescription;
     <section class="band band--dark guide" id="guide">
       <div class="wrap guide__inner">
         <div>
-          <p class="tag tag--pale" data-reveal>For your patient</p>
-          <h2 data-reveal style="--delay:80ms">The vasectomy information guide.</h2>
+          <p class="tag tag--pale" data-reveal>{guide.eyebrow}</p>
+          <h2 data-reveal style="--delay:80ms">{guide.heading}</h2>
           <p class="lede" data-reveal style="--delay:160ms">
-            A plain-language booklet covering the procedure, the recovery and the
-            clearance test — written to be handed over at the end of a
-            consultation and read at home.
+            {guide.lede}
           </p>
         </div>
         <a
           class="btn guide__cta"
-          href={`mailto:${SITE.email}?subject=${encodeURIComponent("Vasectomy information guide")}`}
+          href={`mailto:${SITE.email}?subject=${encodeURIComponent(guide.emailSubject)}`}
           data-reveal
           style="--delay:220ms"
         >
-          Request the guide
+          {guide.ctaLabel}
           <span class="btn__arrow" aria-hidden="true">→</span>
         </a>
       </div>

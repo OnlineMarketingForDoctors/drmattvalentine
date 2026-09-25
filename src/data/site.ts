@@ -90,8 +90,10 @@ export const CHROME = {
         'bit more use than a pen.',
       linkLabel: 'Request one',
       emailSubject: 'Orchidometer request',
-      imageAlt:
-        'A Prader orchidometer — a graduated chain of ellipsoid beads used to measure testicular volume',
+      image: {
+        __image: 'src/assets/generated/orchidometer.png',
+        alt: 'A Prader orchidometer — a graduated chain of ellipsoid beads used to measure testicular volume',
+      },
     },
   },
 };

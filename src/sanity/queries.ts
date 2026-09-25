@@ -1,41 +1,17 @@
 /**
  * Every GROQ query the site runs. Loaders in ./loaders.ts turn the results
- * into the shapes the pages already use.
- *
- * Lists are ordered by the curated `order` field set in Studio, never
- * alphabetically.
+ * into the shapes the pages use.
  */
 import groq from "groq";
 
-export const settingsQuery = groq`*[_id == "siteSettings"][0]{
-  name, ahpra, phoneLabel, phoneDigits, email, facebook, vasectomyAustralia,
-  header{ brandName, brandTagline, cta, links[]{ label, href } },
-  footer{ tagline, phoneTag, copyrightHolder, links[]{ label, href } },
-  referBand{
-    eyebrow, heading, lede, cta, noteBefore, noteLink, noteAfter,
-    orchidometer{ eyebrow, heading, body, linkLabel, emailSubject, imageAlt }
-  }
-}`;
+/** Site Settings: contact details, header, footer, refer band and figures. */
+export const settingsQuery = groq`*[_id == "siteSettings"][0]`;
 
-export const statsQuery = groq`*[_id == "stats"][0]{
-  career, annual, cost, urgentWeeks, minutes, nsvYear, startYear
-}`;
+/** One page's document, by its fixed ID (page-<slug>). */
+export const pageQuery = groq`*[_id == $id][0]`;
 
-export const regionsQuery = groq`*[_type == "clinicRegion"] | order(order asc){
-  _id, doctor, code, name,
-  "clinics": *[_type == "clinic" && references(^._id)] | order(order asc){ area, clinic, base }
-}`;
+/** Every page's sitemap line; the loader orders and filters them. */
+export const sitemapQuery = groq`*[_id in $ids]{ _id, route, title, blurb }`;
 
-/** Every route's page. The loader picks one, or the sitemap entries. */
-export const pagesQuery = groq`*[_type == "page"] | order(order asc){
-  _id, path, title, blurb, metaTitle, metaDescription,
-  hero{ eyebrow, heading, lede, imageAlt, crumb, primaryCta, secondaryCta }
-}`;
-
-export const careerQuery = groq`*[_type == "careerMilestone"] | order(order asc){ year, title, body }`;
-
-export const commitmentsQuery = groq`*[_type == "commitment"] | order(order asc){ label, body }`;
-
-export const appointmentStepsQuery = groq`*[_type == "appointmentStep"] | order(order asc){ title, detail }`;
-
-export const advantagesQuery = groq`*[_type == "advantage"] | order(order asc){ heading, body }`;
+/** Every clinic. The loader groups them under the fixed regions. */
+export const clinicsQuery = groq`*[_type == "clinic"] | order(order asc){ doctor, region, area, clinic, base }`;

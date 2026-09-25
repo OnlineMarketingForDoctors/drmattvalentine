@@ -2,15 +2,14 @@
 import Base from "../layouts/Base.astro";
 import Nav from "../components/Nav.astro";
 import Footer from "../components/Footer.astro";
-import { webPage } from "../lib/schema";
 import PageHero from "../components/PageHero.astro";
 import ReferBand from "../components/ReferBand.astro";
-import { getLocations, getPage, getSettings } from "../sanity/loaders";
+import RichText from "../components/RichText.astro";
+import { webPage } from "../lib/schema";
+import { getPage, getSettings } from "../sanity/loaders";
 
-const [SITE, { valentineCount }] = await Promise.all([getSettings(), getLocations()]);
-
-import desk from "../assets/generated/desk.webp";
-const page = await getPage("/contact/");
+const [SITE, page] = await Promise.all([getSettings(), getPage("/contact/")]);
+const { ask, where } = page;
 const title = page.metaTitle;
 const description = page.metaDescription;
 ---
@@ -24,49 +23,38 @@ const description = page.metaDescription;
 
   <main id="main">
     <PageHero
-      eyebrow={page.hero.eyebrow}
-      title={page.hero.heading}
-      lede={page.hero.lede}
-      image={desk}
-      imageAlt={page.hero.imageAlt}
-      focus="center"
-      crumb={page.hero.crumb}
+      eyebrow={page.eyebrow}
+      title={page.heading}
+      lede={page.lede}
+      image={page.heroImage}
+      crumb={page.breadcrumb}
     />
 
     <!-- ============================================ FORM -->
     <section class="band cform" id="ask">
       <div class="wrap cform__inner">
         <div class="cform__intro">
-          <p class="tag" data-reveal>Send a question</p>
-          <h2 data-reveal style="--delay:80ms">He will come back to you.</h2>
+          <p class="tag" data-reveal>{ask.eyebrow}</p>
+          <h2 data-reveal style="--delay:80ms">{ask.heading}</h2>
           <p class="cform__note" data-reveal style="--delay:160ms">
-            Fill this out and Dr Valentine will contact you as soon as he can —
-            bearing in mind he may be in a room in Rockhampton when it arrives.
-            Please keep patient identifiers out of the message; a description of
-            the clinical question is enough to get a useful answer.
+            {ask.note}
           </p>
-          <p class="cform__aside" data-reveal style="--delay:220ms">
-            Not a GP? Patients book directly through <a
-              href={SITE.vasectomyAustralia}
-              rel="nofollow noopener"
-              target="_blank">Vasectomy Australia</a
-            > rather than through these rooms.
-          </p>
+          <RichText value={ask.aside} class="cform__aside" reveal={{ start: 220 }} />
 
           <dl class="cform__direct" data-reveal style="--delay:280ms">
             <div>
-              <dt>Phone</dt>
+              <dt>{ask.phoneLabel}</dt>
               <dd><a href={SITE.phoneHref}>{SITE.phoneLabel} · {SITE.phoneDigits}</a></dd>
             </div>
             <div>
-              <dt>Email</dt>
+              <dt>{ask.emailLabel}</dt>
               <dd><a href={`mailto:${SITE.email}`}>{SITE.email}</a></dd>
             </div>
             <div>
-              <dt>Facebook</dt>
+              <dt>{ask.facebookLabel}</dt>
               <dd>
                 <a href={SITE.facebook} rel="nofollow noopener noreferrer" target="_blank">
-                  Vasectomy Australia
+                  {ask.facebookLinkText}
                 </a>
               </dd>
             </div>
@@ -75,33 +63,33 @@ const description = page.metaDescription;
 
         <form class="cform__form" data-cform novalidate>
           <div class="field">
-            <label for="cf-name">Your name</label>
+            <label for="cf-name">{ask.fieldName}</label>
             <input id="cf-name" name="name" type="text" autocomplete="name" required />
           </div>
 
           <div class="field">
-            <label for="cf-practice">Practice</label>
+            <label for="cf-practice">{ask.fieldPractice}</label>
             <input id="cf-practice" name="practice" type="text" autocomplete="organization" />
           </div>
 
           <div class="field">
-            <label for="cf-email">Email</label>
+            <label for="cf-email">{ask.fieldEmail}</label>
             <input id="cf-email" name="email" type="email" autocomplete="email" required />
           </div>
 
           <div class="field">
-            <label for="cf-phone">Phone <span class="field__opt">optional</span></label>
+            <label for="cf-phone">{ask.fieldPhone} <span class="field__opt">{ask.fieldOptional}</span></label>
             <input id="cf-phone" name="phone" type="tel" autocomplete="tel" />
           </div>
 
           <div class="field field--wide">
-            <label for="cf-message">Your question</label>
+            <label for="cf-message">{ask.fieldMessage}</label>
             <textarea id="cf-message" name="message" rows="5" required></textarea>
           </div>
 
           <div class="cform__actions">
             <button class="btn" type="submit">
-              Send question
+              {ask.submitLabel}
               <span class="btn__arrow" aria-hidden="true">→</span>
             </button>
             <p class="cform__status" data-cform-status role="status" aria-live="polite"></p>
@@ -114,14 +102,13 @@ const description = page.metaDescription;
     <section class="band band--drape where" id="where">
       <div class="wrap where__inner">
         <div data-reveal>
-          <p class="tag tag--pale">Clinics</p>
-          <h2>{valentineCount} clinics, three states.</h2>
+          <p class="tag tag--pale">{where.eyebrow}</p>
+          <h2>{where.heading}</h2>
           <p class="lede">
-            If the question is simply "where is the nearest one", the full list
-            is on the procedure page, filterable by state.
+            {where.lede}
           </p>
           <a class="btn btn--ghost btn--on-dark" href="/vasectomy/#clinics">
-            Find a clinic
+            {where.ctaLabel}
             <span class="btn__arrow" aria-hidden="true">→</span>
           </a>
         </div>

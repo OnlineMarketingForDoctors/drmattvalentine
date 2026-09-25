@@ -1,0 +1,71 @@
+---
+/**
+ * Paragraphs from a Sanity rich-text field: italic, bold and links only.
+ * Tokens are already filled by the loader. Site paths get their trailing
+ * slash; web links open in a new tab with rel="nofollow noopener", like
+ * every external link on the site; tel: and mailto: links stay as they are.
+ *
+ * `reveal` adds the scroll-in animation, staggering each paragraph. The
+ * parent's scope attribute goes on every element rendered here, so the
+ * parent's scoped CSS (".refer__note a" and so on) still applies.
+ */
+interface Span {
+  text: string;
+  marks?: string[];
+}
+interface Block {
+  _type: string;
+  children?: Span[];
+  markDefs?: { _key: string; _type: string; href?: string }[];
+}
+
+interface Props {
+  value: Block[];
+  /** Class on each <p>. */
+  class?: string;
+  /** First paragraph's delay in ms, then `step` more for each after it. */
+  reveal?: { start: number; step?: number };
+  /** Astro's scope attribute from the parent, so its CSS reaches these elements. */
+  [attr: `data-${string}`]: unknown;
+}
+
+const { value, class: pClass, reveal, ...attrs } = Astro.props;
+const blocks = value.filter((b) => b._type === "block");
+
+const web = (href: string) => /^https?:\/\//i.test(href);
+const withSlash = (href: string) =>
+  href.startsWith("/") ? href.replace(/^([^?#]*?)\/?(?=[?#]|$)/, (_, p) => `${p}/`) : href;
+const linkOf = (b: Block, marks: string[] = []) =>
+  marks.map((m) => b.markDefs?.find((d) => d._key === m && d._type === "link")).find(Boolean)?.href;
+---
+
+{
+  blocks.map((b, i) => (
+    <p
+      class={pClass}
+      data-reveal={reveal ? "" : undefined}
+      style={reveal ? `--delay:${reveal.start + i * (reveal.step ?? 50)}ms` : undefined}
+      {...attrs}
+    >
+      {(b.children ?? []).map((s) => {
+        const marks = s.marks ?? [];
+        let node: any = s.text;
+        if (marks.includes("em")) node = <em {...attrs}>{node}</em>;
+        if (marks.includes("strong")) node = <strong {...attrs}>{node}</strong>;
+        const href = linkOf(b, marks);
+        if (href) {
+          node = web(href) ? (
+            <a href={href} rel="nofollow noopener" target="_blank" {...attrs}>
+              {node}
+            </a>
+          ) : (
+            <a href={withSlash(href)} {...attrs}>
+              {node}
+            </a>
+          );
+        }
+        return node;
+      })}
+    </p>
+  ))
+}

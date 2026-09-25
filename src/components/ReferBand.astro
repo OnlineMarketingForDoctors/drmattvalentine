@@ -1,7 +1,6 @@
 ---
-import { Image } from "astro:assets";
+import SanityImage from "./SanityImage.astro";
 import { getSettings } from "../sanity/loaders";
-import orchidImg from "../assets/generated/orchidometer.png";
 
 interface Props {
   /** Interior pages carry an id so the nav can target them. */
@@ -46,9 +45,8 @@ const orchid = band.orchidometer;
         Dr Cashion's site. */}
     <aside class="refer__swag" data-reveal style="--delay:200ms">
       <div class="refer__swag-media">
-        <Image
-          src={orchidImg}
-          alt={orchid.imageAlt}
+        <SanityImage
+          image={orchid.image}
           widths={[400, 700, 1000]}
           sizes="(min-width: 60rem) 24rem, 90vw"
           quality={80}

@@ -1,22 +1,16 @@
 ---
-import { Image } from "astro:assets";
 import Base from "../layouts/Base.astro";
 import Nav from "../components/Nav.astro";
 import Footer from "../components/Footer.astro";
-import { webPage } from "../lib/schema";
 import PageHero from "../components/PageHero.astro";
 import ReferBand from "../components/ReferBand.astro";
-import { getCareer, getLocations, getPage, getSettings, getStats } from "../sanity/loaders";
+import RichText from "../components/RichText.astro";
+import SanityImage from "../components/SanityImage.astro";
+import { webPage } from "../lib/schema";
+import { getPage, getSettings } from "../sanity/loaders";
 
-const [SITE, STATS, { valentineCount }] = await Promise.all([getSettings(), getStats(), getLocations()]);
-
-import corridor from "../assets/generated/corridor.webp";
-import headshot from "../assets/photos/valentine-headshot.jpeg";
-import consult from "../assets/photos/valentine-consult.jpg";
-
-/* A real chronology, so the years carry information rather than decoration. */
-const career = await getCareer();
-const page = await getPage("/about/");
+const [SITE, page] = await Promise.all([getSettings(), getPage("/about/")]);
+const { intro, career, offDuty } = page;
 const title = page.metaTitle;
 const description = page.metaDescription;
 ---
@@ -30,48 +24,32 @@ const description = page.metaDescription;
 
   <main id="main">
     <PageHero
-      eyebrow={page.hero.eyebrow}
-      title={page.hero.heading}
-      lede={page.hero.lede}
-      image={corridor}
-      imageAlt={page.hero.imageAlt}
-      focus="center"
-      crumb={page.hero.crumb}
+      eyebrow={page.eyebrow}
+      title={page.heading}
+      lede={page.lede}
+      image={page.heroImage}
+      crumb={page.breadcrumb}
     />
 
     <!-- ============================================ OPENING -->
     <section class="band open">
       <div class="wrap open__inner">
         <div class="open__body">
-          <p class="tag" data-reveal>The short version</p>
+          <p class="tag" data-reveal>{intro.eyebrow}</p>
           <h2 data-reveal style="--delay:80ms">
-            {STATS.career} vasectomies, and about {STATS.annual} a year.
+            {intro.heading}
           </h2>
           <p class="lede" data-reveal style="--delay:160ms">
-            Dr Matt Valentine is a Specialist GP with Vasectomy Australia. He has
-            narrowed a broad medical career — military aviation medicine, general
-            practice, day surgery — down to one procedure performed very often,
-            in a lot of places.
+            {intro.lede}
           </p>
-          <p data-reveal style="--delay:220ms">
-            The travelling is the part that surprises people. Most vasectomists
-            work from one or two rooms in a capital city. He runs a circuit
-            instead, which means a patient in Townsville or Bendigo sees the
-            same doctor, using the same technique, as a patient in Brisbane.
-          </p>
+          <RichText value={intro.body} reveal={{ start: 220 }} />
         </div>
 
         <figure class="open__portrait" data-reveal style="--delay:140ms">
-          <Image
-            src={headshot}
-            alt="Dr Matt Valentine in navy surgical scrubs"
-            widths={[500, 800, 1200]}
-            sizes="(min-width: 62rem) 24rem, 80vw"
-            quality={82}
-          />
+          <SanityImage image={intro.portrait} widths={[500, 800, 1200]} sizes="(min-width: 62rem) 24rem, 80vw" quality={82} />
           <figcaption>
-            <span class="tag">Dr Matt Valentine</span>
-            FRACGP · Designated Aviation Medical Examiner
+            <span class="tag">{intro.captionName}</span>
+            {intro.captionCredentials}
             <span class="open__ahpra">AHPRA registration {SITE.ahpra}</span>
           </figcaption>
         </figure>
@@ -81,14 +59,14 @@ const description = page.metaDescription;
     <!-- ============================================ CAREER -->
     <section class="band band--dark career" id="career">
       <div class="wrap">
-        <p class="tag tag--pale" data-reveal>The long version</p>
+        <p class="tag tag--pale" data-reveal>{career.eyebrow}</p>
         <h2 class="career__title" data-reveal style="--delay:80ms">
-          Twenty-five years, in order.
+          {career.heading}
         </h2>
 
         <ol class="career__list">
           {
-            career.map((c, i) => (
+            career.milestones.map((c: { year: string; title: string; body: string }, i: number) => (
               <li data-reveal style={`--delay:${120 + i * 70}ms`}>
                 <span class="career__year">{c.year}</span>
                 <div class="career__body">
@@ -106,27 +84,12 @@ const description = page.metaDescription;
     <section class="band off">
       <div class="wrap off__inner">
         <div class="off__media" data-reveal>
-          <Image
-            src={consult}
-            alt="Dr Matt Valentine in conversation with a colleague across a desk"
-            widths={[700, 1100, 1600]}
-            sizes="(min-width: 60rem) 46vw, 90vw"
-            quality={82}
-          />
+          <SanityImage image={offDuty.image} widths={[700, 1100, 1600]} sizes="(min-width: 60rem) 46vw, 90vw" quality={82} />
         </div>
         <div class="off__body">
-          <p class="tag" data-reveal>Away from the list</p>
-          <h2 data-reveal style="--delay:80ms">Brisbane, a spaniel, and a piano.</h2>
-          <p data-reveal style="--delay:160ms">
-            He lives in Brisbane with his wife and daughter. He runs trails with
-            Lilly, a springer spaniel who is not especially interested in
-            pacing, and rides a mountain bike. He plays the piano properly and
-            the guitar less so.
-          </p>
-          <p data-reveal style="--delay:210ms">
-            The family travels as much as it can, on the theory that there is a
-            lot of world and a finite number of school holidays.
-          </p>
+          <p class="tag" data-reveal>{offDuty.eyebrow}</p>
+          <h2 data-reveal style="--delay:80ms">{offDuty.heading}</h2>
+          <RichText value={offDuty.body} reveal={{ start: 160 }} />
         </div>
       </div>
     </section>

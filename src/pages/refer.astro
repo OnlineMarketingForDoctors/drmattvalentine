@@ -3,14 +3,12 @@ import Base from "../layouts/Base.astro";
 import Nav from "../components/Nav.astro";
 import Footer from "../components/Footer.astro";
 import PageHero from "../components/PageHero.astro";
-import { getLocations, getPage, getSettings, getStats } from "../sanity/loaders";
-
-const [SITE, STATS, { valentineCount }] = await Promise.all([getSettings(), getStats(), getLocations()]);
+import RichText from "../components/RichText.astro";
 import { webPage } from "../lib/schema";
-
-import instruments from "../assets/generated/instruments.webp";
+import { getPage } from "../sanity/loaders";
 
 const page = await getPage("/refer/");
+const { intro } = page;
 const title = page.metaTitle;
 const description = page.metaDescription;
 ---
@@ -24,30 +22,22 @@ const description = page.metaDescription;
 
   <main id="main">
     <PageHero
-      eyebrow={page.hero.eyebrow}
-      title={page.hero.heading}
-      lede={page.hero.lede}
-      image={instruments}
-      imageAlt={page.hero.imageAlt}
-      focus="center"
-      crumb={page.hero.crumb}
+      eyebrow={page.eyebrow}
+      title={page.heading}
+      lede={page.lede}
+      image={page.heroImage}
+      crumb={page.breadcrumb}
     />
 
     <section class="band refer" id="refer">
       <div class="wrap refer__inner">
         <div class="refer__intro">
-          <p class="tag" data-reveal>For referring doctors</p>
-          <h2 data-reveal style="--delay:80ms">Are you a GP with a patient for vasectomy?</h2>
+          <p class="tag" data-reveal>{intro.eyebrow}</p>
+          <h2 data-reveal style="--delay:80ms">{intro.heading}</h2>
           <p class="lede" data-reveal style="--delay:160ms">
-            Dr Valentine has performed {STATS.career} no-scalpel vasectomies
-            across {valentineCount} clinics, and aims to give your patient the
-            highest standard of clinical care.
+            {intro.lede}
           </p>
-          <p class="refer__note" data-reveal style="--delay:220ms">
-            Urgent cases are accommodated within {STATS.urgentWeeks} weeks
-            wherever possible. If you would rather talk it through first, the
-            rooms are on <a href={SITE.phoneHref}>{SITE.phoneLabel}</a>.
-          </p>
+          <RichText value={intro.note} class="refer__note" reveal={{ start: 220 }} />
         </div>
 
         {/*

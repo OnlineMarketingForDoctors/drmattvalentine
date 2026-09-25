@@ -23,16 +23,16 @@ const [SITE, page] = await Promise.all([getSettings(), getPage("/thank-you-refer
   <main id="main">
     <section class="band ty">
       <div class="wrap ty__inner">
-        <p class="tag">{page.hero.eyebrow}</p>
-        <h1>{page.hero.heading}</h1>
-        <p class="lede">{page.hero.lede}</p>
+        <p class="tag">{page.eyebrow}</p>
+        <h1>{page.heading}</h1>
+        <p class="lede">{page.lede}</p>
 
         <div class="ty__actions">
           <a class="btn" href="/">
-            {page.hero.primaryCta}
+            {page.primaryCta}
             <span class="btn__arrow" aria-hidden="true">&#8594;</span>
           </a>
-          <a class="btn btn--ghost" href="/refer/">{page.hero.secondaryCta}</a>
+          <a class="btn btn--ghost" href="/refer/">{page.secondaryCta}</a>
         </div>
 
         <p class="ty__phone">

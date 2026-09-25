@@ -8,13 +8,10 @@
  */
 
 /*
- * Lists that were written inside .astro frontmatter before the site read from
- * Sanity. Figures are {tokens}, filled in at build time from Stats and the
- * clinic counts, so they cannot disagree between sections.
+ * The lists inside pages (src/data/pages.ts uses them). In Studio each is a
+ * drag-to-reorder list inside its page. Figures are {tokens}, filled in at
+ * build time, so they cannot disagree between sections.
  */
-
-/** Credentials the practice has supplied evidence for. Ask before adding. */
-export const credentials = ['FRACGP', 'Designated Aviation Medical Examiner'];
 
 /** /about/ — a real chronology, so the years carry information. */
 export const career = [

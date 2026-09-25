@@ -1,12 +1,15 @@
 ---
 import { getLocations } from "../sanity/loaders";
 
-const { valentineStates, cashionStates, valentineCount, cashionCount } = await getLocations();
+const { valentineStates, cashionStates } = await getLocations();
 
 interface Props {
   id?: string;
+  /** The procedure page's Locations tab. */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  content: any;
 }
-const { id = "clinics" } = Astro.props;
+const { id = "clinics", content: t } = Astro.props;
 
 const allValentine = valentineStates.flatMap((s) =>
   s.clinics.map((c) => ({ ...c, code: s.code, state: s.name }))
@@ -16,21 +19,19 @@ const allValentine = valentineStates.flatMap((s) =>
 <section class="band clinics" id={id}>
   <div class="wrap">
     <header class="clinics__head">
-      <p class="tag" data-reveal>Where he operates</p>
+      <p class="tag" data-reveal>{t.eyebrow}</p>
       <h2 data-reveal style="--delay:80ms">
-        {valentineCount} clinics, three states.
+        {t.heading}
       </h2>
       <p class="lede measure" data-reveal style="--delay:160ms">
-        He flies to all of them. Brisbane is the base; everything else is a
-        trip. If your patient can get to one of these towns, they do not need
-        to travel to a capital city for the procedure.
+        {t.lede}
       </p>
     </header>
 
     {/* Filter is progressive enhancement: without JS every clinic is shown,
         which is the useful failure mode for a list this short. */}
     <div class="clinics__filter" data-filter role="group" aria-label="Filter clinics by state">
-      <button type="button" data-state="all" aria-pressed="true">All</button>
+      <button type="button" data-state="all" aria-pressed="true">{t.allLabel}</button>
       {
         valentineStates.map((s) => (
           <button type="button" data-state={s.code} aria-pressed="false">
@@ -56,7 +57,7 @@ const allValentine = valentineStates.flatMap((s) =>
       }
     </ol>
 
-    <p class="clinics__empty" data-empty hidden>No clinics in that state.</p>
+    <p class="clinics__empty" data-empty hidden>{t.emptyText}</p>
   </div>
 
   {/* The honest answer to "where is the nearest one" spans the whole network,
@@ -65,12 +66,10 @@ const allValentine = valentineStates.flatMap((s) =>
   <div class="wrap clinics__network">
     <hr class="rule" />
     <header class="clinics__net-head" data-reveal>
-      <p class="tag">The rest of the network</p>
-      <h3>Dr Geoff Cashion covers another {cashionCount}.</h3>
+      <p class="tag">{t.networkEyebrow}</p>
+      <h3>{t.networkHeading}</h3>
       <p class="measure">
-        If your patient is outside Queensland, Victoria or Western Australia,
-        they will most likely see Dr Cashion rather than Dr Valentine. Same
-        technique, same organisation.
+        {t.networkText}
       </p>
     </header>
 

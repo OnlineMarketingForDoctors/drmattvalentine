@@ -1,17 +1,42 @@
-import {HomeIcon} from '@sanity/icons/Home'
+import {PinIcon} from '@sanity/icons/Pin'
 import {defineField, defineType} from 'sanity'
-import {orderField} from './lib/order'
+import {DOCTORS, REGIONS} from './lib/regions'
 
 /**
- * One clinic. Counts shown on the site ("18 clinics", "3 states") are derived
- * from these documents, so never write a count into copy by hand.
+ * One clinic, for either doctor. Clinics are their own list, not part of a
+ * page, because several pages show them: the home page groups Dr Valentine's
+ * by state, the procedure page lists both doctors', and the clinic count
+ * appears across the site. Counts are always worked out from this list.
  */
 export const clinic = defineType({
   name: 'clinic',
   title: 'Clinic',
   type: 'document',
-  icon: HomeIcon,
+  icon: PinIcon,
   fields: [
+    defineField({
+      name: 'doctor',
+      title: 'Doctor',
+      type: 'string',
+      description: 'Who sees patients at this clinic.',
+      options: {list: DOCTORS.map((d) => d.value), layout: 'radio'},
+      validation: (rule) => rule.required(),
+    }),
+    defineField({
+      name: 'region',
+      title: 'Region',
+      type: 'string',
+      description: 'The heading this clinic is listed under. The regions are fixed.',
+      options: {list: REGIONS.map((r) => ({title: `${r.title} — ${r.doctor}`, value: r.value}))},
+      validation: (rule) =>
+        rule.required().custom((value, ctx) => {
+          const region = REGIONS.find((r) => r.value === value)
+          const doctor = (ctx.document as {doctor?: string} | undefined)?.doctor
+          return !region || !doctor || region.doctor === doctor
+            ? true
+            : `That region is in ${region.doctor}'s list`
+        }),
+    }),
     defineField({
       name: 'area',
       title: 'Area',
@@ -27,12 +52,11 @@ export const clinic = defineType({
       validation: (rule) => rule.required(),
     }),
     defineField({
-      name: 'region',
-      title: 'Region',
-      type: 'reference',
-      to: [{type: 'clinicRegion'}],
-      description: 'Also decides which doctor sees patients here.',
-      validation: (rule) => rule.required(),
+      name: 'order',
+      title: 'Order within its region',
+      type: 'number',
+      description: 'Lower numbers come first (1, 2, 3…).',
+      validation: (rule) => rule.required().integer().min(0),
     }),
     defineField({
       name: 'base',
@@ -40,53 +64,39 @@ export const clinic = defineType({
       type: 'boolean',
       description: 'Where Dr Valentine practises between trips. Only one clinic can be his base.',
       initialValue: false,
+      hidden: ({document}) =>
+        (document as {doctor?: string} | undefined)?.doctor !== 'Dr Matt Valentine',
       validation: (rule) =>
         rule.custom(async (base, ctx) => {
           if (!base) return true
-          const doc = ctx.document as {_id: string; region?: {_ref: string}} | undefined
-          const id = doc?._id.replace(/^drafts\./, '')
-          const {doctor, others} = await ctx.getClient({apiVersion: '2025-01-01'}).fetch<{
-            doctor?: string
-            others: number
-          }>(
-            `{
-              "doctor": *[_id == $region][0].doctor,
-              "others": count(*[_type == "clinic" && base == true && !(_id in [$id, "drafts." + $id]) && !(_id in path("drafts.**"))])
-            }`,
-            {region: doc?.region?._ref ?? '', id},
-          )
-          if (doctor && doctor !== 'valentine')
-            return "Only Dr Valentine's clinics have a home base"
-          if (others) return 'Another clinic is already marked as the home base'
-          return true
+          const id = ctx.document?._id.replace(/^drafts\./, '')
+          const others = await ctx
+            .getClient({apiVersion: '2025-01-01'})
+            .fetch<number>(
+              'count(*[_type == "clinic" && base == true && !(_id in [$id, "drafts." + $id]) && !(_id in path("drafts.**"))])',
+              {id},
+            )
+          return others ? 'Another clinic is already marked as the home base' : true
         }),
     }),
-    {...orderField, description: 'Order within its region.'},
   ],
   orderings: [
     {
-      title: 'Region, then curated order',
-      name: 'regionOrder',
+      title: 'Doctor, region, order',
+      name: 'doctorRegionOrder',
       by: [
-        {field: 'region.doctor', direction: 'desc'},
-        {field: 'region.order', direction: 'asc'},
+        {field: 'doctor', direction: 'desc'},
+        {field: 'region', direction: 'asc'},
         {field: 'order', direction: 'asc'},
       ],
     },
   ],
   preview: {
-    select: {
-      area: 'area',
-      clinic: 'clinic',
-      region: 'region.name',
-      code: 'region.code',
-      base: 'base',
-      order: 'order',
-    },
-    prepare: ({area, clinic, region, code, base, order}) => ({
+    select: {area: 'area', clinic: 'clinic', doctor: 'doctor', region: 'region', base: 'base'},
+    prepare: ({area, clinic, doctor, region, base}) => ({
       title: base ? `${area} (home base)` : area,
-      subtitle: [order, clinic, region && `${region}${code && code !== region ? ` (${code})` : ''}`]
-        .filter((v) => v != null)
+      subtitle: [doctor, REGIONS.find((r) => r.value === region)?.title, clinic]
+        .filter(Boolean)
         .join(' · '),
     }),
   },

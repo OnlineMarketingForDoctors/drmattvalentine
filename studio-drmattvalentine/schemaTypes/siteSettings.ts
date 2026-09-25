@@ -58,7 +58,8 @@ const text = (
 
 /**
  * Everything shared across pages: contact details and registration, the
- * header, the footer, and the refer band that closes most pages. The noindex switch is deliberately NOT here: it drives a
+ * header, the footer, the refer band that closes most pages, and the figures
+ * quoted to referring GPs. The noindex switch is deliberately NOT here: it drives a
  * generated vercel.json and must stay in src/site.config.ts.
  */
 export const siteSettings = defineType({
@@ -71,6 +72,7 @@ export const siteSettings = defineType({
     {name: 'header', title: 'Header'},
     {name: 'footer', title: 'Footer'},
     {name: 'referBand', title: 'Refer band'},
+    {name: 'figures', title: 'Figures'},
   ],
   fields: [
     defineField({
@@ -80,25 +82,6 @@ export const siteSettings = defineType({
       type: 'string',
       initialValue: 'Dr Matt Valentine',
       validation: (rule) => rule.required(),
-    }),
-    defineField({
-      name: 'credentials',
-      group: 'contact',
-      title: 'Post-nominals and designations',
-      type: 'array',
-      description:
-        'Only what the practice has supplied evidence for. Ask before adding anything new.',
-      of: [defineArrayMember({type: 'string'})],
-      options: {
-        list: [
-          {title: 'FRACGP', value: 'FRACGP'},
-          {
-            title: 'Designated Aviation Medical Examiner',
-            value: 'Designated Aviation Medical Examiner',
-          },
-        ],
-      },
-      validation: (rule) => rule.required().min(1).unique(),
     }),
     defineField({
       name: 'ahpra',
@@ -231,11 +214,77 @@ export const siteSettings = defineType({
               description: 'Opens an email to the address in Contact details.',
             }),
             text('emailSubject', 'Email subject', {max: 60}),
-            text('imageAlt', 'Image alt text', {
-              max: 160,
-              description: 'The image itself is set in code.',
+            defineField({
+              name: 'image',
+              title: 'Image',
+              type: 'imageWithAlt',
+              validation: (rule) => rule.required().assetRequired(),
             }),
           ],
+        }),
+      ],
+    }),
+    defineField({
+      name: 'figures',
+      title: 'Figures',
+      type: 'object',
+      group: 'figures',
+      description:
+        'Quoted to referring GPs across the site. Copy elsewhere refers to them as {tokens}, so they are only ever changed here.',
+      options: {collapsible: false},
+      fields: [
+        defineField({
+          name: 'career',
+          title: 'Career total vasectomies',
+          type: 'string',
+          description:
+            'As displayed, e.g. 25,000+. Token: {career}, or {careerNumber} without the +.',
+          validation: (rule) =>
+            rule.required().regex(/^\d{1,3}(,\d{3})*\+?$/, {name: 'number, e.g. 25,000+'}),
+        }),
+        defineField({
+          name: 'annual',
+          title: 'Vasectomies per year',
+          type: 'string',
+          description: 'As displayed, e.g. 1,000. Token: {annual}.',
+          validation: (rule) =>
+            rule.required().regex(/^\d{1,3}(,\d{3})*\+?$/, {name: 'number, e.g. 1,000'}),
+        }),
+        defineField({
+          name: 'cost',
+          title: 'Out-of-pocket cost',
+          type: 'string',
+          description: 'After the Medicare rebate, same at every clinic, e.g. $597. Token: {cost}.',
+          validation: (rule) =>
+            rule.required().regex(/^\$\d{1,3}(,\d{3})*$/, {name: 'dollar amount, e.g. $597'}),
+        }),
+        defineField({
+          name: 'urgentWeeks',
+          title: 'Urgent referral wait (weeks)',
+          type: 'number',
+          description: 'Token: {urgentWeeks}.',
+          validation: (rule) => rule.required().integer().min(1).max(12),
+        }),
+        defineField({
+          name: 'minutes',
+          title: 'Procedure time (minutes)',
+          type: 'number',
+          description: 'Token: {minutes}.',
+          validation: (rule) => rule.required().integer().min(5).max(120),
+        }),
+        defineField({
+          name: 'nsvYear',
+          title: 'Year of no-scalpel training',
+          type: 'number',
+          description: 'Token: {nsvYear}.',
+          validation: (rule) => rule.required().integer().min(1990).max(new Date().getFullYear()),
+        }),
+        defineField({
+          name: 'startYear',
+          title: 'Year he started performing vasectomies',
+          type: 'number',
+          description: 'Token: {startYear}.',
+          validation: (rule) => rule.required().integer().min(1990).max(new Date().getFullYear()),
         }),
       ],
     }),

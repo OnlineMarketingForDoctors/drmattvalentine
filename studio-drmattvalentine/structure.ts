@@ -2,62 +2,20 @@ import type {StructureResolver} from 'sanity/structure'
 import {ROUTES} from './schemaTypes/lib/routes'
 
 /*
- * Settings, stats and pages are fixed documents with fixed IDs, so there is
- * exactly one of each for the site to read. Clinics are shown per doctor because a
- * referring GP's first question is whether their patient sees Dr Valentine.
+ * Same order as the Dr Geoff Cashion Studio: Site Settings, then the Pages
+ * (a fixed set, one per route), then Clinics, the one list several pages
+ * share. Everything else a page shows is edited inside that page.
  */
-const singleton = (S: Parameters<StructureResolver>[0], type: string, title: string) =>
-  S.listItem().title(title).id(type).child(S.document().schemaType(type).documentId(type))
-
-const ordered = (S: Parameters<StructureResolver>[0], type: string, title: string) =>
-  S.documentTypeListItem(type)
-    .title(title)
-    .child(
-      S.documentTypeList(type)
-        .title(title)
-        .defaultOrdering([{field: 'order', direction: 'asc'}]),
-    )
-
-const clinicsFor = (S: Parameters<StructureResolver>[0], doctor: string, title: string) =>
-  S.listItem()
-    .title(title)
-    .id(`clinics-${doctor}`)
-    .child(
-      S.documentList()
-        .title(title)
-        .apiVersion('2025-01-01')
-        .filter('_type == "clinic" && region->doctor == $doctor')
-        .params({doctor})
-        .defaultOrdering([
-          {field: 'region.order', direction: 'asc'},
-          {field: 'order', direction: 'asc'},
-        ]),
-    )
-
 export const structure: StructureResolver = (S) =>
   S.list()
     .title('Content')
     .items([
-      singleton(S, 'siteSettings', 'Site settings'),
-      singleton(S, 'stats', 'Stats'),
-      S.divider(),
-      clinicsFor(S, 'valentine', 'Clinics — Dr Valentine'),
-      clinicsFor(S, 'cashion', 'Clinics — Dr Cashion'),
-      S.documentTypeListItem('clinicRegion')
-        .title('Clinic regions')
+      S.listItem()
+        .title('Site Settings')
+        .id('siteSettings')
         .child(
-          S.documentTypeList('clinicRegion')
-            .title('Clinic regions')
-            .defaultOrdering([
-              {field: 'doctor', direction: 'desc'},
-              {field: 'order', direction: 'asc'},
-            ]),
+          S.document().schemaType('siteSettings').documentId('siteSettings').title('Site Settings'),
         ),
-      S.divider(),
-      ordered(S, 'careerMilestone', 'Career milestones'),
-      ordered(S, 'commitment', 'Commitments'),
-      ordered(S, 'appointmentStep', 'Appointment steps'),
-      ordered(S, 'advantage', 'Procedure advantages'),
       S.divider(),
       S.listItem()
         .title('Pages')
@@ -67,11 +25,24 @@ export const structure: StructureResolver = (S) =>
             .title('Pages')
             .items(
               ROUTES.map((r) =>
-                S.documentListItem()
-                  .schemaType('page')
+                S.listItem()
+                  .title(r.title)
                   .id(r.id)
-                  .child(S.document().schemaType('page').documentId(r.id)),
+                  .schemaType(r.type)
+                  .child(S.document().schemaType(r.type).documentId(r.id).title(r.title)),
               ),
             ),
+        ),
+      S.divider(),
+      S.documentTypeListItem('clinic')
+        .title('Clinics')
+        .child(
+          S.documentTypeList('clinic')
+            .title('Clinics')
+            .defaultOrdering([
+              {field: 'doctor', direction: 'desc'},
+              {field: 'region', direction: 'asc'},
+              {field: 'order', direction: 'asc'},
+            ]),
         ),
     ])

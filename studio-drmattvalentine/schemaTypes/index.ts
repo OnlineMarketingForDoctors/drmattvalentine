@@ -1,28 +1,22 @@
-import {advantage} from './advantage'
-import {appointmentStep} from './appointmentStep'
-import {careerMilestone} from './careerMilestone'
 import {clinic} from './clinic'
-import {clinicRegion} from './clinicRegion'
-import {commitment} from './commitment'
-import {page} from './page'
+import {decorativeImage, figure, imageWithAlt, richText} from './objects'
+import {pageTypes} from './pages'
 import {siteSettings} from './siteSettings'
-import {stats} from './stats'
+import {PAGE_TYPES} from './lib/routes'
 
 export const schemaTypes = [
   siteSettings,
-  stats,
-  clinicRegion,
+  ...pageTypes,
   clinic,
-  careerMilestone,
-  commitment,
-  appointmentStep,
-  advantage,
-  page,
+  imageWithAlt,
+  decorativeImage,
+  richText,
+  figure,
 ]
 
 /**
- * Types whose documents are a fixed set with fixed IDs: the two singletons,
- * and one Page per route (see lib/routes.ts). Studio cannot create, duplicate
- * or delete them. See structure.ts.
+ * Types whose documents are a fixed set with fixed IDs: Site Settings, and
+ * one page per route (lib/routes.ts). Studio cannot create, duplicate,
+ * unpublish or delete them. See structure.ts.
  */
-export const FIXED_TYPES = ['siteSettings', 'stats', 'page']
+export const FIXED_TYPES = new Set<string>(['siteSettings', ...PAGE_TYPES])
